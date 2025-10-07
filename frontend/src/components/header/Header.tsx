@@ -69,7 +69,7 @@ const Header = () => {
             />
 
             <h2 className="text-3xl font-bold tracking-tight text-indigo-700 cursor-pointer hover:text-indigo-900 transition duration-150">
-              MERN Health
+              MERN-Health
             </h2>
           </div>
 

@@ -3,18 +3,26 @@ import { cn } from "../lib/utils";
 
 interface Props {
   className?: string;
-  children:React.ReactNode
+  children: React.ReactNode;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
-const Button = ({ className,children }: Props) => {
+const Button = ({ className, children, disabled = false, loading = false }: Props) => {
   return (
     <button
       className={cn(
-        "border-2 border-primary text-dark text-center bg-transparent  rounded-[15px] px-7  py-[3.5]  font-medium transition-all  duration-300 hover:bg-primary hover:text-white cursor-pointer drop-shadow-2xl hover:rounded-[55px]",
-        className
+        `border-2 border-primary text-dark text-center bg-transparent rounded-[15px] px-7 py-[3.5] font-medium transition-all duration-300 cursor-pointer drop-shadow-2xl  flex items-center justify-center gap-2 ${disabled ? "":"hover:bg-primary hover:text-white hover:rounded-[55px]"}`,
+        className,
+        (disabled || loading) && "cursor-not-allowed opacity-60"
       )}
+      disabled={disabled || loading}
     >
-      {children}
+      {loading ? (
+        <span className="animate-pulse">Loading...</span>
+      ) : (
+        children
+      )}
     </button>
   );
 };
