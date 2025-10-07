@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Circle, User } from "lucide-react";
 import { Link } from "react-router";
-import { generateSlugify } from "../../utils/helper";
-import { doctorImages } from "./_components/imageData";
+import { doctors } from "./_components/dataDoctor";
+
 
 const AllDoctors = () => {
   const categories = [
@@ -14,83 +14,7 @@ const AllDoctors = () => {
     { id: "neurologist", name: "Neurology", icon: "🧠" },
   ];
 
-  const doctors = [
-    {
-      id: 1,
-      name: "Dr. Ayşe Yılmaz",
-      category: "dermatologist",
-      categoryName: "Dermatology",
-      available: true,
-      href: `/doctor/${generateSlugify("Dr. Ayşe Yılmaz")}`,
-      image: doctorImages.doctor1,
-    },
-    {
-      id: 2,
-      name: "Dr. Mehmet Kaya",
-      category: "pediatrician",
-      categoryName: "Pediatrics",
-      href: `/doctor/${generateSlugify("Dr. Mehmet Kaya")}`,
-      available: true,
-      image: doctorImages.doctor2,
-    },
-    {
-      id: 3,
-      name: "Dr. Zeynep Demir",
-      category: "cardiologist",
-      categoryName: "Cardiology",
-      href: `/doctor/${generateSlugify("Dr. Zeynep Demir")}`,
-
-      available: false,
-      image: doctorImages.doctor3,
-    },
-    {
-      id: 4,
-      name: "Dr. Can Öztürk",
-      category: "dermatologist",
-      categoryName: "Dermatology",
-      href: `/doctor/${generateSlugify("Dr. Can Öztürk")}`,
-
-      available: true,
-      image: doctorImages.doctor4,
-    },
-    {
-      id: 5,
-      name: "Dr. Elif Şahin",
-      category: "orthopedist",
-      categoryName: "Orthopedics",
-      href: `/doctor/${generateSlugify("Dr. Elif Şahin")}`,
-
-      available: true,
-      image: doctorImages.doctor5,
-    },
-    {
-      id: 6,
-      name: "Dr. Ahmet Çelik",
-      category: "neurologist",
-      categoryName: "Neurology",
-      href: `/doctor/${generateSlugify("Dr. Ahmet Çelik")}`,
-      available: false,
-      image: doctorImages.doctor6,
-    },
-    {
-      id: 7,
-      name: "Dr. Selin Arslan",
-      category: "pediatrician",
-      categoryName: "Pediatrics",
-      href: `/doctor/${generateSlugify("Dr. Selin Arslan")}`,
-      available: true,
-      image: doctorImages.doctor7,
-    },
-    {
-      id: 8,
-      name: "Dr. Burak Yıldız",
-      category: "cardiologist",
-      categoryName: "Cardiology",
-      href: `/doctor/${generateSlugify("Dr. Burak Yıldız")}`,
-      available: true,
-      image: doctorImages.doctor8,
-    },
-  ];
+ 
 
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -155,7 +79,7 @@ const AllDoctors = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredDoctors.map((doctor) => (
               // Kartın tamamı artık bir Link
-              <Link to={doctor.href} key={doctor.id} className="group block">
+              <Link to={`${doctor.href}/${doctor.id}`} key={doctor.id} className="group block">
                 <div className="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:transform group-hover:scale-105 h-full flex flex-col">
                   <div className="relative">
                     <img
