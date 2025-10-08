@@ -7,3 +7,4 @@ export const generateSlugify = (title: string) => {
     trim: true,
   });
 };
+

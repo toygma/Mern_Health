@@ -12,6 +12,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import DocBookings from "./_components/DocBookings";
 
 const DetailDoctor = () => {
   const { id } = useParams<{ id: string }>();
@@ -307,88 +308,7 @@ const DetailDoctor = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-indigo-600" />
-            </div>
-            <h1 className="font-bold text-2xl text-gray-900">
-              Available Booking Slots
-            </h1>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {doctor.slots?.map((item) => (
-              <div
-                key={item.id}
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105"
-              >
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12"></div>
-
-                <div className="relative z-10 flex flex-col gap-4">
-                  {/* Day section */}
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-bold text-xl text-white capitalize">
-                      {item.day}
-                    </h2>
-                    <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                      <Calendar className="w-5 h-5 text-black" />
-                    </div>
-                  </div>
-
-                  {/* Available slots badge */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1">
-                      <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-30">
-                        <p className="text-black text-opacity-80 text-xs font-medium mb-1">
-                          Available Slots
-                        </p>
-                        <p className="text-white font-bold text-3xl">
-                          {item.number}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Time section */}
-                  <div className="flex items-center gap-2 bg-white bg-opacity-10 backdrop-blur-sm rounded-lg px-4 py-3 border border-white border-opacity-20">
-                    <Clock className="w-4 h-4 text-black" />
-                    <span className="text-black text-sm font-medium">
-                      {item.time}
-                    </span>
-                  </div>
-
-                  {/* Book button */}
-                  <button className="w-full bg-white text-indigo-600 font-semibold py-3 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform group-hover:translate-y-0 translate-y-1 shadow-md">
-                    Book Now
-                  </button>
-                </div>
-
-                {/* Hover effect overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-              </div>
-            ))}
-          </div>
-
-          {/* No slots message */}
-          {(!doctor.slots || doctor.slots.length === 0) && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-gray-400" />
-              </div>
-              <p className="text-gray-600 font-medium">
-                No booking slots available at the moment
-              </p>
-              <p className="text-gray-500 text-sm mt-2">
-                Please check back later or contact us directly
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      <DocBookings />
     </>
   );
 };
