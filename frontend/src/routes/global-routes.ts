@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
-import { MainRoutes } from "./MainRoutes";
+import { AuthRoutes, MainRoutes } from "./MainRoutes";
 
 export const router = createBrowserRouter([
-    MainRoutes
+    MainRoutes,
+    AuthRoutes
 ])

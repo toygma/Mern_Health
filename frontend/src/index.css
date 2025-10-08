@@ -1,47 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
-
 
 @custom-variant dark (&:where(.dark,.dark * ));
 
-
-@theme{
-    --font-ibm:"IBM Plex Sans", sans-serif;
-    --font-roboto:"Roboto Condensed", sans-serif;
-    --color-primary:#1946da;
-    --color-dark:#001047;
+@theme {
+  --font-ibm: "IBM Plex Sans", sans-serif;
+  --font-roboto: "Roboto Condensed", sans-serif;
+  --color-primary: #1946da;
+  --color-dark: #001047;
 }
 
 :root {
-    --font-ibm: "IBM Plex Sans", sans-serif;
-    --font-roboto: "Roboto Condensed", sans-serif;
+  --font-ibm: "IBM Plex Sans", sans-serif;
+  --font-roboto: "Roboto Condensed", sans-serif;
 }
 
 h1 {
-    font-size: 60px;
-    line-height: 72px;
-    font-weight: 600;
-    color: #001047;
-    font-family: var(--font-ibm);
+  font-size: 60px;
+  line-height: 72px;
+  font-weight: 600;
+  color: #001047;
+  font-family: var(--font-ibm);
 }
 
 p {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 400;
-    color: #676c80;
-    font-family: var(--font-ibm);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #676c80;
+  font-family: var(--font-ibm);
 }
 
-.float{
-    animation: float 3s infinite linear;
+.float {
+  animation: float 3s infinite linear;
 }
 
 @keyframes float {
-    0%, 100%{
-        transform: translateY(0)
-    }
-    50%{
-        transform: translate(-8px);
-    }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translate(-8px);
+  }
 }

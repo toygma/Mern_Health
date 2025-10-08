@@ -26,7 +26,7 @@ const AllDoctors = () => {
           : doctors.filter((doc) => doc.category === selectedCategory);
           setFilterDoctor(filteredDoctors);
         });
-  }, []);
+  }, [selectedCategory]);
 
   if (isPending) {
     return <Loading />;
@@ -48,15 +48,11 @@ const AllDoctors = () => {
                 Filter to search
               </p>
             </div>
-            {/* Mobil: Yatayda kayan bir flex container
-              Tablet ve üstü (md): Dikey bir liste (flex-col)
-            */}
             <div className="flex gap-2 overflow-x-auto md:flex-col md:overflow-x-visible pb-2 md:pb-0 -mx-2 px-2">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  // flex-shrink-0 mobil yatay kaydırmada butonların sıkışmasını engeller
                   className={`w-[250px] h-full flex-shrink-0 md:w-full text-left px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 flex items-center gap-3 text-sm sm:text-base cursor-pointer ${
                     selectedCategory === cat.id
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform md:scale-105"
@@ -89,7 +85,7 @@ const AllDoctors = () => {
             {filterDoctor.map((doctor) => (
               // Kartın tamamı artık bir Link
               <Link
-                to={`${doctor.href}/${doctor.id}`}
+                to={`/doctor/${doctor.href}/${doctor.id}`}
                 key={doctor.id}
                 className="group block"
               >

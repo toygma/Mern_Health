@@ -1,6 +1,7 @@
 import { RouterProvider } from "react-router";
 import { router } from "./routes/global-routes";
 import React, { Suspense } from "react";
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
           <RouterProvider router={router} />
         </Suspense>
       </div>
+      <Toaster position="top-center" />
     </React.Fragment>
   );
 };

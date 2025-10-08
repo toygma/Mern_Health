@@ -35,7 +35,7 @@ const RelatedDoctors = ({ speciality, docId }: Props) => {
               <div
                 key={index}
                 onClick={() =>
-                  navigate(`/${generateSlugify(item.href)}/${item.id}`)
+                  navigate(`/doctor/${generateSlugify(item.href)}/${item.id}`)
                 }
                 className="cursor-pointer group w-[400px]"
               >

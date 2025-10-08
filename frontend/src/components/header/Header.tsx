@@ -1,9 +1,8 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import logo from "/logo.png";
 import Button from "../../ui/Button";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
-
 
 interface DropdownItem {
   name: string;
@@ -14,7 +13,7 @@ interface Props {
   id: number;
   title: string;
   href: string;
-  dropdown: DropdownItem[];
+  dropdown?: DropdownItem[] | undefined;
 }
 
 const data: Props[] = [
@@ -36,10 +35,6 @@ const data: Props[] = [
     id: 2,
     title: "Doctors",
     href: "/doctors",
-    dropdown: [
-      { name: "Our Doctors", link: "/doctors" },
-      { name: "Doctor Details", link: "/doctor-details" },
-    ],
   },
   {
     id: 3,
@@ -54,6 +49,7 @@ const data: Props[] = [
 
 const Header = () => {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
+  const navigate = useNavigate()
 
   const activeDropdown = data.find((item) => item.id === activeItemId);
   return (
@@ -68,7 +64,7 @@ const Header = () => {
               className="w-auto h-10 object-contain"
             />
 
-            <h2 className="text-3xl font-bold tracking-tight text-indigo-700 cursor-pointer hover:text-indigo-900 transition duration-150">
+            <h2 onClick={()=>navigate("/")} className="text-3xl font-bold tracking-tight text-indigo-700 cursor-pointer hover:text-indigo-900 transition duration-150">
               MERN-Health
             </h2>
           </div>
@@ -93,14 +89,14 @@ const Header = () => {
                 </li>
               ))}
             </ul>
-            {activeDropdown && (
+            {activeDropdown?.dropdown?.length ? (
               <div
                 onMouseLeave={() => setActiveItemId(null)}
-                className={`
+                className="
       absolute top-full left-0 mt-5 w-auto min-w-[250px] 
       bg-white rounded-xl shadow-2xl border border-gray-100 p-4 
       transition duration-300 ease-in-out 
-    `}
+    "
                 style={{ left: "50%", transform: "translateX(-50%)" }}
               >
                 <ul
@@ -120,7 +116,7 @@ const Header = () => {
                   ))}
                 </ul>
               </div>
-            )}
+            ) : null}
           </div>
           <div className="flex items-center gap-4">
             <Button children="Book an Appointment" className="py-2" />
