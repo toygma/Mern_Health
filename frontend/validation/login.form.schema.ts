@@ -1,6 +1,18 @@
 import z from "zod";
 
-export const LoginFormSchema = z
+export const LoginFormSchema = z.object({
+  email: z.email("Invalid email address."),
+
+  password: z
+    .string({
+      error: "Password is required.",
+    })
+    .min(6, "Password must be at least 6 characters."),
+});
+
+export type TLoginFormSchema = z.infer<typeof LoginFormSchema>;
+
+export const SignUpFormSchema = z
   .object({
     name: z
       .string({
@@ -26,4 +38,4 @@ export const LoginFormSchema = z
     path: ["confirmpassword"],
   });
 
-export type TLoginFormSchema = z.infer<typeof LoginFormSchema>;
+export type TSignUpFormSchema = z.infer<typeof SignUpFormSchema>;

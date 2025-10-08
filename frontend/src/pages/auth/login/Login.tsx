@@ -5,8 +5,9 @@ import {
 } from "../../../../validation/login.form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../../../ui/FormInput";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import Button from "../../../ui/Button";
+import { Link } from "react-router";
 
 const Login = () => {
   const {
@@ -26,18 +27,11 @@ const Login = () => {
       <div className="bg-white rounded-2xl w-[450px]">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl!">Login to start your session</h1>
-          <p>Secyre,quick, and easy</p>
+          <p>Secure,quick, and easy</p>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 mt-4"
           >
-            <FormInput
-              error={errors.name?.message}
-              icon={User}
-              name="name"
-              register={register}
-              type="text"
-            />
             <FormInput
               error={errors.email?.message}
               icon={Mail}
@@ -52,13 +46,6 @@ const Login = () => {
               type="password"
               icon={Lock}
             />
-            <FormInput
-              error={errors.confirmpassword?.message}
-              name="confirmpassword"
-              register={register}
-              icon={Lock}
-              type="password"
-            />
             <Button
               children={"Login"}
               className="py-2"
@@ -66,6 +53,11 @@ const Login = () => {
               disabled={isSubmitting}
             />
           </form>
+            <div>
+            <p>
+              Don't have an account? <Link to={"/sign-up"} className="underline text-blue-400">Sign Up</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
