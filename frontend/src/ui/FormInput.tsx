@@ -6,7 +6,7 @@ interface Props {
   error: any;
   type: string;
   name: string;
-  icon: any;
+  icon?: any;
 }
 
 const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
@@ -14,7 +14,11 @@ const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
   const labelText =
     name === "email"
       ? "Email Address"
+      : name === "name"
+      ? "Full Name"
       : name.charAt(0).toUpperCase() + name.slice(1);
+
+      
   const inputType = type === "password" && showPassword ? "text" : type;
 
   return (
@@ -29,12 +33,13 @@ const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
           placeholder=" "
           className="peer border-2 border-gray-200 rounded-lg outline-none w-full py-3.5 px-12  transition-all duration-300 bg-white focus:bg-white"
           {...register(name)}
+          autoComplete="off"
         />
         {type === "password" && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#9f887f] transition-colors z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors z-10"
           >
             {showPassword ? (
               <EyeOff className="w-5 h-5" />
@@ -45,10 +50,10 @@ const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
         )}
         <label
           htmlFor={name}
-          className="absolute left-12 -top-2.5 text-sm text-[#9f887f] bg-white px-2 transition-all duration-200 pointer-events-none 
+          className="absolute left-12 -top-2.5 text-sm text-black bg-white px-2 transition-all duration-200 pointer-events-none 
           peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base 
           peer-placeholder-shown:text-gray-400 peer-placeholder-shown:bg-transparent
-          peer-focus:-top-2.5 peer-focus:translate-y-0 peer-focus:text-sm peer-focus:text-[#9f887f] peer-focus:bg-white"
+          peer-focus:-top-2.5 peer-focus:translate-y-0 peer-focus:text-sm peer-focus:text-black peer-focus:bg-white"
         >
           {labelText}
         </label>
