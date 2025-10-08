@@ -13,6 +13,7 @@ import {
   Mail,
 } from "lucide-react";
 import DocBookings from "./_components/DocBookings";
+import RelatedDoctors from "./_components/RelatedDoctors";
 
 const DetailDoctor = () => {
   const { id } = useParams<{ id: string }>();
@@ -309,6 +310,7 @@ const DetailDoctor = () => {
         </div>
       </div>
       <DocBookings />
+      <RelatedDoctors speciality={doctor.categoryName} docId={doctor.id}/>
     </>
   );
 };
