@@ -1,12 +1,14 @@
 import { Suspense } from "react";
+import { lazy } from 'react';
 import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/NotFound";
 import Loading from "../components/Loading";
 
 //suspense
-import HomePage from "../pages/home/HomePage";
-import AllDoctors from "../pages/doctors/AllDoctors";
-import DetailDoctor from "../pages/detail/DetailDoctor";
+
+const HomePage = lazy(() => import("../pages/home/HomePage"));
+const AllDoctors = lazy(() => import("../pages/doctors/AllDoctors"));
+const DetailDoctor = lazy(() => import("../pages/detail/DetailDoctor"));
 
 export const MainRoutes = {
   path: "/",

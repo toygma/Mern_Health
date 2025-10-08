@@ -1,30 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Circle, User } from "lucide-react";
 import { Link } from "react-router";
-import { doctors } from "./_components/dataDoctor";
+import { doctors, type Doctor } from "./_components/dataDoctor";
+import Loading from "../../components/Loading";
 
-
+const categories = [
+  { id: "all", name: "All Doctors", icon: "👨‍⚕️" },
+  { id: "dermatologist", name: "Dermatology", icon: "🔬" },
+  { id: "pediatrician", name: "Pediatrics", icon: "👶" },
+  { id: "cardiologist", name: "Cardiology", icon: "❤️" },
+  { id: "orthopedist", name: "Orthopedics", icon: "🦴" },
+  { id: "neurologist", name: "Neurology", icon: "🧠" },
+];
 const AllDoctors = () => {
-  const categories = [
-    { id: "all", name: "All Doctors", icon: "👨‍⚕️" },
-    { id: "dermatologist", name: "Dermatology", icon: "🔬" },
-    { id: "pediatrician", name: "Pediatrics", icon: "👶" },
-    { id: "cardiologist", name: "Cardiology", icon: "❤️" },
-    { id: "orthopedist", name: "Orthopedics", icon: "🦴" },
-    { id: "neurologist", name: "Neurology", icon: "🧠" },
-  ];
-
- 
+  const [isPending, startTransition] = useTransition();
 
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [filterDoctor, setFilterDoctor] = useState<Doctor[]>([]);
 
-  const filteredDoctors =
-    selectedCategory === "all"
-      ? doctors
-      : doctors.filter((doc) => doc.category === selectedCategory);
+  useEffect(() => {
+    startTransition(() => {
+      const filteredDoctors =
+        selectedCategory === "all"
+          ? doctors
+          : doctors.filter((doc) => doc.category === selectedCategory);
+          setFilterDoctor(filteredDoctors);
+        });
+  }, []);
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   return (
-     // Ana Kapsayıcı: Kenar boşlukları ve maksimum genişlik eklendi
+    // Ana Kapsayıcı: Kenar boşlukları ve maksimum genişlik eklendi
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="flex flex-col md:flex-row md:gap-8 lg:gap-12">
         {/* Sol Taraf - Kategoriler (Sidebar) */}
@@ -71,15 +80,19 @@ const AllDoctors = () => {
                 : categories.find((c) => c.id === selectedCategory)?.name}
             </h1>
             <p className="text-sm sm:text-base text-gray-600">
-              Showing {filteredDoctors.length} doctors
+              Showing {filterDoctor.length} doctors
             </p>
           </div>
 
           {/* Doktor Kartları Grid'i */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredDoctors.map((doctor) => (
+            {filterDoctor.map((doctor) => (
               // Kartın tamamı artık bir Link
-              <Link to={`${doctor.href}/${doctor.id}`} key={doctor.id} className="group block">
+              <Link
+                to={`${doctor.href}/${doctor.id}`}
+                key={doctor.id}
+                className="group block"
+              >
                 <div className="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:transform group-hover:scale-105 h-full flex flex-col">
                   <div className="relative">
                     <img
@@ -94,7 +107,11 @@ const AllDoctors = () => {
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      <Circle className={`w-2 h-2 ${doctor.available ? 'fill-green-500' : 'fill-red-500'}`} />
+                      <Circle
+                        className={`w-2 h-2 ${
+                          doctor.available ? "fill-green-500" : "fill-red-500"
+                        }`}
+                      />
                       {doctor.available ? "Available" : "Busy"}
                     </div>
                   </div>
@@ -107,7 +124,7 @@ const AllDoctors = () => {
                     <p className="text-sm text-gray-600 mb-4">
                       {doctor.categoryName}
                     </p>
-                    
+
                     {/* mt-auto: Bu butonu kartın en altına iter */}
                     <div
                       className={`w-full mt-auto text-center py-2.5 px-4 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base ${
@@ -125,7 +142,7 @@ const AllDoctors = () => {
           </div>
 
           {/* Doktor Bulunamadığında Gösterilecek Mesaj */}
-          {filteredDoctors.length === 0 && (
+          {filterDoctor.length === 0 && (
             <div className="text-center text-gray-500 mt-20 py-10">
               <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <p className="text-lg font-medium">No doctors found.</p>

@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { doctors, type Doctor } from "../doctors/_components/dataDoctor";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   Calendar,
   Clock,
@@ -14,23 +14,23 @@ import {
 } from "lucide-react";
 import DocBookings from "./_components/DocBookings";
 import RelatedDoctors from "./_components/RelatedDoctors";
+import Loading from "../../components/Loading";
 
 const DetailDoctor = () => {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
-
-  const fetchDocInfo = () => {
-    const docInfo = doctors.find((item) => item.id === id);
-    if (docInfo) {
-      setDoctor(docInfo);
-    } else {
-      setDoctor(null);
-    }
-  };
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    fetchDocInfo();
+    startTransition(() => {
+      const docInfo = doctors.find((item) => item.id === id);
+      setDoctor(docInfo ?? null);
+    });
   }, [id]);
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   if (!doctor) {
     return (
@@ -310,7 +310,7 @@ const DetailDoctor = () => {
         </div>
       </div>
       <DocBookings />
-      <RelatedDoctors speciality={doctor.categoryName} docId={doctor.id}/>
+      <RelatedDoctors speciality={doctor.categoryName} docId={doctor.id} />
     </>
   );
 };
