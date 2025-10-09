@@ -1,55 +1,16 @@
 import { Link, useNavigate } from "react-router";
 import logo from "/logo.png";
 import Button from "../../ui/Button";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import MobileHeader from "./_components/MobileHeader";
+import { data } from "./_components/dataHeader";
 
-interface DropdownItem {
-  name: string;
-  link: string;
-}
 
-interface Props {
-  id: number;
-  title: string;
-  href: string;
-  dropdown?: DropdownItem[] | undefined;
-}
-
-const data: Props[] = [
-  {
-    id: 1,
-    title: "About Us",
-    href: "/about",
-    dropdown: [
-      { name: "Departments", link: "/departments" },
-      { name: "Pricing", link: "/pricing" },
-      { name: "Careers", link: "/careers" },
-      { name: "Testimonials", link: "/testimonials" },
-      { name: "FAQ", link: "/faq" },
-      { name: "Schedule Working Hours", link: "/schedule" },
-      { name: "Make an Appointment", link: "/appointment" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Doctors",
-    href: "/doctors",
-  },
-  {
-    id: 3,
-    title: "Services",
-    href: "/services",
-    dropdown: [
-      { name: "All Services", link: "/services" },
-      { name: "Service Details", link: "/service-details" },
-    ],
-  },
-];
 
 const Header = () => {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
-  const navigate = useNavigate()
+  const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const navigate = useNavigate();
 
   const activeDropdown = data.find((item) => item.id === activeItemId);
   return (
@@ -64,12 +25,15 @@ const Header = () => {
               className="w-auto h-10 object-contain"
             />
 
-            <h2 onClick={()=>navigate("/")} className="text-3xl font-bold tracking-tight text-indigo-700 cursor-pointer hover:text-indigo-900 transition duration-150">
+            <h2
+              onClick={() => navigate("/")}
+              className="text-3xl font-bold tracking-tight text-indigo-700 cursor-pointer hover:text-indigo-900 transition duration-150"
+            >
               MERN-Health
             </h2>
           </div>
 
-          <div>
+          <div className="lg:flex hidden">
             <ul className="flex space-x-8">
               {data.map((item) => (
                 <li key={item.id} onMouseEnter={() => setActiveItemId(item.id)}>
@@ -118,9 +82,34 @@ const Header = () => {
               </div>
             ) : null}
           </div>
-          <div className="flex items-center gap-4">
-            <Button children="Book an Appointment" className="py-2" />
-            <UserCircleIcon className="size-12 cursor-pointer" />
+          <div className="flex items-center gap-4 relative">
+            <Button
+              children="Book an Appointment"
+              className="py-2 lg:block hidden"
+            />
+            <button
+              onClick={() => setOpenMobileMenu(!openMobileMenu)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors  cursor-pointer"
+            >
+              <svg
+                className="w-8 h-8 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+
+            {/* Mobile Menu */}
+            {openMobileMenu && (
+              <MobileHeader onClose={() => setOpenMobileMenu(false)} openMenu={openMobileMenu} />
+            )}
           </div>
         </div>
       </div>

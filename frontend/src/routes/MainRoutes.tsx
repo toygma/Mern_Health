@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/NotFound";
 import Loading from "../components/Loading";
 import { GuestRoute, ProtectedRoute } from "./protected-route";
+import MyAppointments from "../pages/myAppointments/MyAppointments";
 
 //suspense
 
@@ -13,6 +14,7 @@ const AllDoctors = lazy(() => import("../pages/doctors/AllDoctors"));
 const DetailDoctor = lazy(() => import("../pages/detail/DetailDoctor"));
 const SignUp = lazy(() => import("../pages/auth/signup/SignUp"));
 const Login = lazy(() => import("../pages/auth/login/Login"));
+const MyProfile = lazy(() => import("../pages/myProfile/MyProfile"));
 
 export const MainRoutes = {
   path: "/",
@@ -43,6 +45,22 @@ export const MainRoutes = {
           element: (
             <Suspense fallback={<Loading />}>
               <DetailDoctor />
+            </Suspense>
+          ),
+        },
+         {
+          path: "/my-profile",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <MyProfile />
+            </Suspense>
+          ),
+        },
+          {
+          path: "/my-appointment",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <MyAppointments />
             </Suspense>
           ),
         },
