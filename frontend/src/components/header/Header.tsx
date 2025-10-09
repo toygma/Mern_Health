@@ -4,12 +4,12 @@ import Button from "../../ui/Button";
 import { useState } from "react";
 import MobileHeader from "./_components/MobileHeader";
 import { data } from "./_components/dataHeader";
-
-
+import user from "/user.png";
 
 const Header = () => {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const [avatarMenu, setAvatarMenu] = useState(false);
   const navigate = useNavigate();
 
   const activeDropdown = data.find((item) => item.id === activeItemId);
@@ -87,6 +87,29 @@ const Header = () => {
               children="Book an Appointment"
               className="py-2 lg:block hidden"
             />
+            <div className="relative lg:inline-block hidden">
+              {/* Avatar */}
+              <img
+                src={user}
+                alt="avatar"
+                className="w-12 h-12 object-cover rounded-full cursor-pointer"
+                onClick={() => setAvatarMenu(!avatarMenu)}
+              />
+
+              {avatarMenu && (
+                <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">
+                  <Link onClick={() => setAvatarMenu(!avatarMenu)} to={"/my-profile"} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
+                    My Profile
+                  </Link>
+                  <Link onClick={() => setAvatarMenu(!avatarMenu)} to={"/my-appointment"} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">
+                    My Appointment
+                  </Link>
+                  <button onClick={() => setAvatarMenu(!avatarMenu)} className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 cursor-pointer">
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
             <button
               onClick={() => setOpenMobileMenu(!openMobileMenu)}
               className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors  cursor-pointer"
@@ -108,7 +131,10 @@ const Header = () => {
 
             {/* Mobile Menu */}
             {openMobileMenu && (
-              <MobileHeader onClose={() => setOpenMobileMenu(false)} openMenu={openMobileMenu} />
+              <MobileHeader
+                onClose={() => setOpenMobileMenu(false)}
+                openMenu={openMobileMenu}
+              />
             )}
           </div>
         </div>
