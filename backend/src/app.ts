@@ -3,6 +3,10 @@ import cors from "cors";
 import { errorHandler } from "./middlewares/error.handler";
 import { requestLogger } from "./middlewares/request.logger";
 
+//ROUTES
+import userRoute from "./routes/user.route";
+
+
 const app: Express = express();
 
 // Middleware
@@ -19,9 +23,7 @@ app.use(
 );
 
 // Routes
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", message: "Server is running" });
-});
+app.use("/api/v1/auth",userRoute)
 
 // Error Handler (must be last)
 app.use(errorHandler);

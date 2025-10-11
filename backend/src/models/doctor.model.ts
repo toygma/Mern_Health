@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
+
 
 interface IEducation {
   degree: string;
@@ -6,29 +7,32 @@ interface IEducation {
   year: string;
 }
 
-// Doctor Interface
+interface IReview {
+  user: Types.ObjectId;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+}
+
+interface IImage {
+  public_id: string;
+  url: string;
+}
 interface IDoctor extends Document {
-  name: string;
+  user: Types.ObjectId; 
   speciality: string;
-  password: string;
   available: boolean;
-  images: { public_id: string; url: string }[];
+  images: IImage[];
   ratings: number;
   numOfReviews: number;
-  reviews: {
-    user: mongoose.Types.ObjectId;
-    rating: number;
-    comment: string;
-    createdAt: Date;
-  }[];
+  reviews: IReview[];
   experience: string;
   about: string;
   education: IEducation[];
   services: string[];
   hours: string;
-  address:  Record<string, any>;
+  address: Record<string, any>; 
   phone: string;
-  email: string;
   fee: string;
   patients: string;
   awards: string;
@@ -37,38 +41,31 @@ interface IDoctor extends Document {
   updatedAt?: Date;
 }
 
-// Doctor Schema
 const doctorSchema = new Schema<IDoctor>(
   {
-    name: { type: String, required: true },
-    password: {
-      type: String,
-      required: true,
-      select: false,
+    user: {
+      type: Schema.Types.ObjectId, 
+      ref: "User",
+      required: true, 
     },
-    email: { type: String, required: true, unique: true },
     speciality: { type: String, required: true },
     available: { type: Boolean, default: true },
-
     images: [
       {
-        public_id: { type: String },
-        url: { type: String },
+        public_id: { type: String, required: true }, 
+        url: { type: String, required: true },
       },
     ],
-
     ratings: { type: Number, default: 0 },
     numOfReviews: { type: Number, default: 0 },
-
     reviews: [
       {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
         rating: { type: Number, required: true },
         comment: { type: String, required: true },
         createdAt: { type: Date, default: Date.now },
       },
     ],
-
     experience: { type: String, required: true },
     about: { type: String, required: true },
     education: [
@@ -91,6 +88,7 @@ const doctorSchema = new Schema<IDoctor>(
 );
 
 const Doctor =
-  mongoose.models.doctor || mongoose.model<IDoctor>("Doctor", doctorSchema);
+  (mongoose.models.Doctor as mongoose.Model<IDoctor>) || 
+  mongoose.model<IDoctor>("Doctor", doctorSchema);
 
 export default Doctor;
