@@ -37,7 +37,6 @@ export const isAuthenticatedUser = async (
       jwtToken,
       process.env.JWT_SECRET!
     ) as DecodedToken;
-
     req.user = await User.findById(decoded.id);
 
     if (!req.user) {
@@ -50,6 +49,7 @@ export const isAuthenticatedUser = async (
 
     next();
   } catch (error) {
+    console.log(error)
     res.status(401).json({
       success: false,
       message: "Invalid token",

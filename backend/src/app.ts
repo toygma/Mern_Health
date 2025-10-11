@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import { errorHandler } from "./middlewares/error.handler";
 import { requestLogger } from "./middlewares/request.logger";
+import cookieParser from "cookie-parser";
 
 //ROUTES
 import userRoute from "./routes/user.route";
@@ -13,6 +14,7 @@ const app: Express = express();
 app.use(requestLogger);
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(cookieParser())
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
