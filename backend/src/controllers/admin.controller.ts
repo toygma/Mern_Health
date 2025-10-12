@@ -23,4 +23,70 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { getAllUsers };
+const addDoctor = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      speciality,
+      available,
+      role,
+      images,
+      experience,
+      about,
+      education,
+      services,
+      hours,
+      address,
+      phone,
+      fee,
+      patients,
+      awards,
+      timeSlots,
+    } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email and password are required",
+      });
+    }
+
+    const existingDoctor = await Doctor.findOne({ email });
+    if (existingDoctor) {
+      return res.status(400).json({
+        success: false,
+        message: "Doctor with this email already exists",
+      });
+    }
+
+    const doctor = await Doctor.create({
+      name,
+      email,
+      password,
+      speciality,
+      available,
+      role,
+      images,
+      experience,
+      about,
+      education,
+      services,
+      hours,
+      address,
+      phone,
+      fee,
+      patients,
+      awards,
+      timeSlots,
+    });
+
+    res.status(201).json({ success: true, doctor });
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+};
+
+export { getAllUsers ,addDoctor};

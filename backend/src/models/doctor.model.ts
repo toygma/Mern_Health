@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
+import { IAppointment } from "./appointment.model";
 
 interface IEducation {
   degree: string;
@@ -31,13 +32,12 @@ export interface IDoctor extends Document {
   patients: string;
   awards: string;
   timeSlots: Record<string, any>;
-  isApproved: string;
   reviews: Types.ObjectId[];
   totalRating: number;
   averageRating: number;
   createdAt?: Date;
   updatedAt?: Date;
-  appointments: any;
+  appointments: IAppointment[];
   getJwtToken: () => string;
   comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
@@ -89,11 +89,6 @@ const doctorSchema = new Schema<IDoctor>(
     patients: { type: String },
     awards: { type: String },
     timeSlots: { type: Array },
-    isApproved: {
-      type: String,
-      enum: ["pending", "approved", "cancelled"],
-      default: "pending",
-    },
     appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
   },
   { timestamps: true }

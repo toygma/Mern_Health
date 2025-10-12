@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./routes/user.route";
 import adminRouter from "./routes/admin.route";
 import reviewRouter from "./routes/review.route";
+import appointmentRouter from "./routes/appointment.route";
 
 const app: Express = express();
 
@@ -29,6 +30,7 @@ app.use(
 app.use("/api/v1/auth", userRoute);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/appointment", appointmentRouter);
 
 // Error Handler (must be last)
 app.use(errorHandler);

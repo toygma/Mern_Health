@@ -134,8 +134,6 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
 
 //* USER UPDATE - DELETE - GET PROFILE *\\
 
-
-
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
