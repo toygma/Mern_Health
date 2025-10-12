@@ -80,4 +80,58 @@ const createReview = async (
   }
 };
 
-export { getAllReviews, createReview };
+//DELETE
+const deleteReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id:reviewId } = req.params;
+    const userId = req?.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "You must log in to delete a review.",
+      });
+    }
+
+    if (!reviewId) {
+      return res.status(400).json({
+        success: false,
+        message: "Review ID is required.",
+      });
+    }
+
+    const review = await Review.findById(reviewId);
+    console.log("🚀 ~ deleteReview ~ review:", review)
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found.",
+      });
+    }
+
+    // Check if the user is the review owner
+    if (review.user._id.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own reviews.",
+      });
+    }
+
+    await Review.findByIdAndDelete(reviewId);
+
+    res.status(200).json({
+      success: true,
+      message: "Review deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete Review Error:", error);
+    next(error);
+  }
+};
+
+export { getAllReviews, createReview, deleteReview };

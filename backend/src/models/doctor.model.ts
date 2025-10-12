@@ -8,7 +8,6 @@ interface IEducation {
   year: string;
 }
 
-
 interface IImage {
   public_id: string;
   url: string;
@@ -33,6 +32,9 @@ export interface IDoctor extends Document {
   awards: string;
   timeSlots: Record<string, any>;
   isApproved: string;
+  reviews: Types.ObjectId[];
+  totalRating: number;
+  averageRating: number;
   createdAt?: Date;
   updatedAt?: Date;
   appointments: any;
@@ -45,31 +47,47 @@ const doctorSchema = new Schema<IDoctor>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
-    speciality: { type: String,  },
+    speciality: { type: String },
     available: { type: Boolean, default: true },
     role: { type: String },
     images: [
       {
-        public_id: { type: String,  },
-        url: { type: String,  },
+        public_id: { type: String },
+        url: { type: String },
       },
     ],
-    experience: { type: String,  },
-    about: { type: String,  },
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+     totalRating: {
+      type: Number,
+      default: 0,
+    },
+    averageRating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    experience: { type: String },
+    about: { type: String },
     education: [
       {
-        degree: { type: String,  },
-        institution: { type: String,  },
-        year: { type: String,  },
+        degree: { type: String },
+        institution: { type: String },
+        year: { type: String },
       },
     ],
     services: [{ type: String }],
-    hours: { type: String,  },
-    address: { type: Object,  },
-    phone: { type: String,  },
-    fee: { type: String,  },
-    patients: { type: String,  },
-    awards: { type: String,  },
+    hours: { type: String },
+    address: { type: Object },
+    phone: { type: String },
+    fee: { type: String },
+    patients: { type: String },
+    awards: { type: String },
     timeSlots: { type: Array },
     isApproved: {
       type: String,
