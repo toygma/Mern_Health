@@ -3,11 +3,10 @@ import User, { IUser } from "../models/user.model";
 import sendToken from "../utils/sendToken";
 import Doctor, { IDoctor } from "../models/doctor.model";
 
-
-
- const register = async (req: Request, res: Response, next: NextFunction) => {
+const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, gender, images, phone, dob, role, address } = req.body;
+    const { name, email, password, gender, images, phone, dob, role, address } =
+      req.body;
 
     if (!name || !email || !password || !images || !gender) {
       return res.status(400).json({
@@ -16,7 +15,8 @@ import Doctor, { IDoctor } from "../models/doctor.model";
       });
     }
 
-    const existingUser = (await User.findOne({ email })) || (await Doctor.findOne({ email }));
+    const existingUser =
+      (await User.findOne({ email })) || (await Doctor.findOne({ email }));
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -77,7 +77,6 @@ import Doctor, { IDoctor } from "../models/doctor.model";
   }
 };
 
-
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -91,55 +90,32 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const existingUser =
+      (await User.findOne({ email }).select("+password")) ||
+      (await Doctor.findOne({ email }).select("+password"));
 
-    if (!user) {
-      res.status(401).json({
+    if (!existingUser) {
+      res.status(409).json({
         success: false,
         message: "No user found",
       });
       return;
     }
-    const isPasswordMatched = await user.comparePassword(password);
+    const isPasswordMatched = await existingUser.comparePassword(password);
     if (!isPasswordMatched) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
-        message: "The password is incorrect.",
-      });
-      return;
-    }
-
-    if (user.role === "doctor") {
-      const doctorProfile = await Doctor.findOne({ user: user._id });
-      const cookieExpiresTime = parseInt(process.env.COOKIE_EXPIRES_TIME!, 10);
-      const cookieExpires = new Date(
-        Date.now() + cookieExpiresTime * 24 * 60 * 60 * 1000
-      );
-
-      const token = user.getJwtToken();
-      res.status(200).cookie("jwtToken", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        expires: cookieExpires,
-        path: "/",
-      });
-
-      return res.status(200).json({
-        success: true,
-        role: "doctor",
-        token,
-        user,
-        doctorProfile,
+        message: "Incorrect password.",
       });
     }
+
     sendToken({
-      user,
-      statusCode: 201,
+      user: existingUser,
+      statusCode: 200,
       res,
     });
-  } catch (error: any) {
-    console.log(error);
+  } catch (error) {
+    console.error("Login Error:", error);
     next(error);
   }
 };
@@ -156,20 +132,108 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
+//* USER UPDATE - DELETE - GET PROFILE *\\
+
+
+
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+
+  try {
+    const user = (await User.findById(id)) || (await Doctor.findById(id));
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const Model:any = user.role === "doctor" ? Doctor : User;
+    const updatedUser = await Model.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully updated",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update Error:", error);
+    next(error);
+  }
+};
+
+// ==================== DELETE USER ====================
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+
+  try {
+    const user = (await User.findById(id)) || (await Doctor.findById(id));
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const Model:any = user.role === "doctor" ? Doctor : User;
+    await Model.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully deleted",
+    });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    next(error);
+  }
+};
+
+// ==================== GET MY PROFILE ====================
 const getMeProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const user = await User.findById(req?.user?._id);
   try {
+    const userId = req?.user?._id;
+    console.log("🚀 ~ getMeProfile ~ userId:", userId)
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized. Please log in again.",
+      });
+    }
+
+    // 🔹 Hem User hem Doctor koleksiyonlarını paralel kontrol et
+    const [patient, doctor] = await Promise.all([
+      User.findById(userId),
+      Doctor.findById(userId),
+    ]);
+
+    const currentUser = patient || doctor;
+
+    if (!currentUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     return res.status(200).json({
-      user,
+      success: true,
+      user: currentUser,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Get Profile Error:", error);
     next(error);
   }
 };
 
-export { register, login, logout, getMeProfile };
+export { register, login, logout, getMeProfile, updateUser, deleteUser };

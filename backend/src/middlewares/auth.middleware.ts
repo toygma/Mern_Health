@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user.model";
+import User, { IUser } from "../models/user.model";
+import Doctor, { IDoctor } from "../models/doctor.model";
 
 interface DecodedToken {
   id: string;
@@ -11,7 +12,7 @@ interface DecodedToken {
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      user?: IUser | IDoctor | any;
     }
   }
 }
@@ -37,9 +38,11 @@ export const isAuthenticatedUser = async (
       jwtToken,
       process.env.JWT_SECRET!
     ) as DecodedToken;
-    req.user = await User.findById(decoded.id);
 
-    if (!req.user) {
+    const user =
+      (await User.findById(decoded.id)) || (await Doctor.findById(decoded.id));
+
+    if (!user) {
       res.status(404).json({
         success: false,
         message: "User not found",
@@ -47,9 +50,12 @@ export const isAuthenticatedUser = async (
       return;
     }
 
+    req.user = user;
+
+
     next();
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(401).json({
       success: false,
       message: "Invalid token",
