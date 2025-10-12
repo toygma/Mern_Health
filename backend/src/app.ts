@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 //ROUTES
 import userRoute from "./routes/user.route";
 import adminRouter from "./routes/admin.route";
+import reviewRouter from "./routes/review.route";
 
 const app: Express = express();
 
@@ -27,6 +28,7 @@ app.use(
 // Routes
 app.use("/api/v1/auth", userRoute);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // Error Handler (must be last)
 app.use(errorHandler);

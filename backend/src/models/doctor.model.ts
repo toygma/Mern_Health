@@ -8,12 +8,6 @@ interface IEducation {
   year: string;
 }
 
-interface IReview {
-  user: Types.ObjectId;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-}
 
 interface IImage {
   public_id: string;
@@ -26,9 +20,6 @@ export interface IDoctor extends Document {
   speciality: string;
   available: boolean;
   images: IImage[];
-  ratings: number;
-  numOfReviews: number;
-  reviews: IReview[];
   experience: string;
   about: string;
   role: string;
@@ -61,16 +52,6 @@ const doctorSchema = new Schema<IDoctor>(
       {
         public_id: { type: String,  },
         url: { type: String,  },
-      },
-    ],
-    ratings: { type: Number, default: 0 },
-    numOfReviews: { type: Number, default: 0 },
-    reviews: [
-      {
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        rating: { type: Number,  },
-        comment: { type: String,  },
-        createdAt: { type: Date, default: Date.now },
       },
     ],
     experience: { type: String,  },

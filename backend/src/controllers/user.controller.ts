@@ -202,7 +202,6 @@ const getMeProfile = async (
 ) => {
   try {
     const userId = req?.user?._id;
-    console.log("🚀 ~ getMeProfile ~ userId:", userId)
 
     if (!userId) {
       return res.status(401).json({
@@ -211,10 +210,9 @@ const getMeProfile = async (
       });
     }
 
-    // 🔹 Hem User hem Doctor koleksiyonlarını paralel kontrol et
     const [patient, doctor] = await Promise.all([
       User.findById(userId),
-      Doctor.findById(userId),
+      Doctor.findById(userId).populate("reviews"),
     ]);
 
     const currentUser = patient || doctor;
