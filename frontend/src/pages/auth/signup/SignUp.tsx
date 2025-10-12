@@ -43,7 +43,9 @@ const SignUp = () => {
       reset();
       navigate("/login", { replace: true });
     } else if (registerError && "data" in registerError) {
-      toast.error(registerError?.data?.message || "Registration failed!");
+      toast.error(
+        (registerError as any)?.data?.message || "Registration failed!"
+      );
     }
   }, [isSuccess, navigate, reset, registerError]);
 
