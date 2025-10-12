@@ -13,6 +13,15 @@ interface IImage {
   public_id: string;
   url: string;
 }
+
+export interface IWorkingHours {
+  dayOfWeek: number;
+  isWorking: boolean;
+  startTime: string;
+  endTime: string;  
+}
+
+// Ana Doktor arayüzü
 export interface IDoctor extends Document {
   name: string;
   email: string;
@@ -25,31 +34,34 @@ export interface IDoctor extends Document {
   role: string;
   education: IEducation[];
   services: string[];
-  hours: string;
   address: Record<string, any>;
   phone: string;
   fee: string;
   patients: string;
   awards: string;
-  timeSlots: Record<string, any>;
   reviews: Types.ObjectId[];
   totalRating: number;
   averageRating: number;
-  createdAt?: Date;
-  updatedAt?: Date;
   appointments: IAppointment[];
+
+  appointmentDurationMinutes: number;
+  workingHours: IWorkingHours[];     
+
   getJwtToken: () => string;
   comparePassword: (enteredPassword: string) => Promise<boolean>;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const doctorSchema = new Schema<IDoctor>(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, select: false },
+    name: { type: String, required: [true, "İsim alanı zorunludur."] },
+    email: { type: String, required: [true, "E-posta alanı zorunludur."], unique: true },
+    password: { type: String, required: [true, "Şifre alanı zorunludur."], minlength: 6, select: false },
     speciality: { type: String },
     available: { type: Boolean, default: true },
-    role: { type: String },
+    role: { type: String, default: "doctor" },
     images: [
       {
         public_id: { type: String },
@@ -62,16 +74,8 @@ const doctorSchema = new Schema<IDoctor>(
         ref: "Review",
       },
     ],
-     totalRating: {
-      type: Number,
-      default: 0,
-    },
-    averageRating: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 5,
-    },
+    totalRating: { type: Number, default: 0 },
+    averageRating: { type: Number, default: 0, min: 0, max: 5 },
     experience: { type: String },
     about: { type: String },
     education: [
@@ -82,14 +86,25 @@ const doctorSchema = new Schema<IDoctor>(
       },
     ],
     services: [{ type: String }],
-    hours: { type: String },
     address: { type: Object },
     phone: { type: String },
     fee: { type: String },
     patients: { type: String },
     awards: { type: String },
-    timeSlots: { type: Array },
     appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
+
+    appointmentDurationMinutes: {
+      type: Number,
+      default: 30
+    },
+    workingHours: [
+      {
+        dayOfWeek: { type: Number, required: true }, 
+        isWorking: { type: Boolean, default: false },
+        startTime: { type: String, default: "09:00" },
+        endTime: { type: String, default: "17:00" },  
+      }
+    ],
   },
   { timestamps: true }
 );
@@ -98,7 +113,6 @@ doctorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -111,7 +125,6 @@ doctorSchema.pre("save", async function (next) {
 doctorSchema.methods.getJwtToken = function (this: IDoctor): string {
   const secret = process.env.JWT_SECRET!;
   const expiresIn = process.env.JWT_EXPIRES_TIME!;
-
   return jwt.sign({ id: this._id }, secret, { expiresIn } as SignOptions);
 };
 

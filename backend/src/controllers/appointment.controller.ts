@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Appointment from "../models/appointment.model";
 import Doctor from "../models/doctor.model";
+import moment from "moment";
 
 const createAppointment = async (
   req: Request,
@@ -33,6 +34,15 @@ const createAppointment = async (
       });
     }
 
+    // Doktor var mı kontrol et
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+
     // Aynı doktor ve kullanıcı için aynı gün birden fazla randevu engelle
     const existingAppointment = await Appointment.findOne({
       user: userId,
@@ -61,6 +71,22 @@ const createAppointment = async (
     });
 
     const savedAppointment = await appointment.save();
+
+    // ONEMLI: await kullan ve hata kontrolu yap
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      doctorId,
+      { $push: { appointments: savedAppointment._id } },
+      { new: true }
+    );
+
+    if (!updatedDoctor) {
+      // Eger doktor update edilemezse, appointment'i sil
+      await Appointment.findByIdAndDelete(savedAppointment._id);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to update doctor appointments",
+      });
+    }
 
     const populatedAppointment = await Appointment.findById(
       savedAppointment._id
@@ -214,68 +240,66 @@ const confirmAppointment = async (
   }
 };
 
-const getAvailableSlots = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getAvailableSlots = async (req: Request, res: Response) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query;
-    if (!date) {
-      return res.status(400).json({
-        success: false,
-        message: "Date is required (YYYY-MM-DD format)",
-      });
+    const { date } = req.query; // date = "2025-10-29"
+
+    if (!date || typeof date !== "string") {
+      return res.status(400).json({ message: "Tarih bilgisi gerekli." });
     }
 
-    // Doktoru kontrol et
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) {
-      return res.status(404).json({
-        success: false,
-        message: "Doctor not found",
-      });
+      return res.status(404).json({ message: "Doktor bulunamadı." });
     }
 
-    const startDate = new Date(date as string);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 1);
+    const requestedDate = moment(date);
+    const dayOfWeek = requestedDate.day();
 
-    const bookedAppointments = await Appointment.find({
+    const scheduleForDay = doctor.workingHours.find(
+      (d) => d.dayOfWeek === dayOfWeek
+    );
+
+    if (!scheduleForDay || !scheduleForDay.isWorking) {
+      return res.json({ availableSlots: [] });
+    }
+
+    const startOfDay = requestedDate.clone().startOf("day");
+    const endOfDay = requestedDate.clone().endOf("day");
+
+    const existingAppointments = await Appointment.find({
       doctor: doctorId,
-      date: { $gte: startDate, $lt: endDate },
-      status: { $in: ["pending", "confirmed"] },
+      date: {
+        $gte: startOfDay.toDate(),
+        $lte: endOfDay.toDate(),
+      },
     });
 
-    const bookedSlots = bookedAppointments.map((apt) => apt.timeSlot);
+    const bookedSlots = existingAppointments.map((app) =>
+      moment(app.date).format("HH:mm")
+    );
 
-    const allSlots = [
-      "09:00-10:00",
-      "10:00-11:00",
-      "11:00-12:00",
-      "12:00-13:00",
-      "14:00-15:00",
-      "15:00-16:00",
-      "16:00-17:00",
-      "17:00-18:00",
-    ];
+    const allSlots = [];
+    const startTime = moment(scheduleForDay.startTime, "HH:mm");
+    const endTime = moment(scheduleForDay.endTime, "HH:mm");
+    const duration = doctor.appointmentDurationMinutes;
+
+    let currentSlot = startTime;
+
+    while (currentSlot.isBefore(endTime)) {
+      allSlots.push(currentSlot.format("HH:mm"));
+      currentSlot.add(duration, "minutes");
+    }
 
     const availableSlots = allSlots.filter(
       (slot) => !bookedSlots.includes(slot)
     );
 
-    res.status(200).json({
-      success: true,
-      message: "Available slots fetched successfully",
-      date,
-      totalSlots: allSlots.length,
-      availableCount: availableSlots.length,
-      availableSlots,
-    });
+    res.json({ availableSlots });
   } catch (error) {
-    console.error("Get Available Slots Error:", error);
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Sunucu hatası oluştu." });
   }
 };
 
