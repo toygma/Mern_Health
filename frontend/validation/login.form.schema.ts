@@ -23,6 +23,10 @@ export const SignUpFormSchema = z
 
     email: z.email("Invalid email address."),
 
+    role: z.enum(["doctor", "patient"], {
+      error: () => ({ message: "Role must be either doctor or patient." }),
+    }),
+
     password: z
       .string({
         error: "Password is required.",

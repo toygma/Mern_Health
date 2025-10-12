@@ -5,10 +5,9 @@ import Doctor, { IDoctor } from "../models/doctor.model";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, gender, images, phone, dob, role, address } =
-      req.body;
+    const { name, email, password,role,address } = req.body;
 
-    if (!name || !email || !password || !images || !gender) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields.",
@@ -41,10 +40,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         name,
         email,
         password,
-        gender,
-        images,
-        phone,
-        dob,
         address: finalAddress,
         role: "patient",
       });
@@ -53,9 +48,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         name,
         email,
         password,
-        gender,
-        images,
-        phone,
         address: finalAddress,
         role: "doctor",
       });
@@ -147,7 +139,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    const Model:any = user.role === "doctor" ? Doctor : User;
+    const Model: any = user.role === "doctor" ? Doctor : User;
     const updatedUser = await Model.findByIdAndUpdate(
       id,
       { $set: req.body },
@@ -179,7 +171,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    const Model:any = user.role === "doctor" ? Doctor : User;
+    const Model: any = user.role === "doctor" ? Doctor : User;
     await Model.findByIdAndDelete(id);
 
     return res.status(200).json({
