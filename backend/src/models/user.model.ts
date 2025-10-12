@@ -18,7 +18,7 @@ export interface IUser extends Document {
   images: IImage[];
   createdAt?: Date;
   updatedAt?: Date;
-
+  role: "patient" | "admin" | "doctor";
   getJwtToken: () => string;
   comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
@@ -38,6 +38,11 @@ const userSchema = new Schema<IUser>(
     gender: { type: String, default: "Not Selected" },
     dob: { type: String, default: "Not Selected" },
     phone: { type: String, default: "0000000" },
+    role: {
+      type: String,
+      enum: ["patient", "admin", "doctor"],
+      default: "patient",
+    },
     images: [
       {
         public_id: { type: String, required: true },

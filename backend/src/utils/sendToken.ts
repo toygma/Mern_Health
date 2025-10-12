@@ -1,8 +1,9 @@
 import { Response } from "express";
 import { IUser } from "../models/user.model";
+import { IDoctor } from "../models/doctor.model";
 
 interface SendTokenOptions {
-  user: IUser;
+  user: IUser | IDoctor;
   statusCode: number;
   res: Response;
 }
