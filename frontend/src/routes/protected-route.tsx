@@ -1,7 +1,9 @@
 import { Navigate, Outlet } from "react-router";
+import { useAppSelector } from "../redux/hook";
 
 export const ProtectedRoute = () => {
-  const user = true;
+    const { user } = useAppSelector((state) => state.auth);
+  
 
   if (user) {
     return <Outlet />;
@@ -11,11 +13,22 @@ export const ProtectedRoute = () => {
 };
 
 export const GuestRoute = () => {
-  const user = false;
+    const { user } = useAppSelector((state) => state.auth);
+  
 
   if (user) {
     return <Navigate to="/" replace />;
   } else {
     return <Outlet />;
   }
+};
+
+export const ProtectedAdmin = () => {
+  const { user } = useAppSelector((state) => state.auth);
+
+  if (!user || user.role !== "admin") {
+    return <Navigate to="/" replace />; 
+  }
+
+  return <Outlet />;
 };

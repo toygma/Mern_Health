@@ -14,7 +14,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { user } = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ Header ~ user:", user);
 
   const activeDropdown = data.find((item) => item.id === activeItemId);
   return (
@@ -88,6 +87,7 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-4 relative">
             <Button
+            type="button"
               children="Book an Appointment"
               className="py-2 lg:block hidden"
             />
@@ -128,7 +128,7 @@ const Header = () => {
               </div>
             ) : (
               <Link to={"/login"}>
-                <Button className="py-2">Sign In</Button>
+                <Button type="button" className="py-2">Sign In</Button>
               </Link>
             )}
             <button
