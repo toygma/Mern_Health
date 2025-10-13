@@ -14,7 +14,7 @@ export const AdminRoutes = {
       element: <ProtectedAdmin />,
       children: [
         {
-          path: "/add-doctor",
+          path: "add-doctor",
           element: (
             <Suspense fallback={<Loading />}>
               <AddDoctor />

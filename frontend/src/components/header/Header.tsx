@@ -103,6 +103,7 @@ const Header = () => {
 
                 {avatarMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">
+                    <span className="px-4 py-2 border-b">Welcome, {user.name}</span>
                     <Link
                       onClick={() => setAvatarMenu(!avatarMenu)}
                       to={"/my-profile"}
