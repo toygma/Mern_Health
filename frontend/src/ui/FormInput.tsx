@@ -1,5 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { cn } from "../lib/utils";
 
 interface Props {
   register: any;
@@ -7,9 +8,17 @@ interface Props {
   type: string;
   name: string;
   icon?: any;
+  className?: string;
 }
 
-const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
+const FormInput = ({
+  register,
+  error,
+  type,
+  name,
+  icon: Icon,
+  className,
+}: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const labelText =
     name === "email"
@@ -18,7 +27,6 @@ const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
       ? "Full Name"
       : name.charAt(0).toUpperCase() + name.slice(1);
 
-      
   const inputType = type === "password" && showPassword ? "text" : type;
 
   return (
@@ -31,7 +39,10 @@ const FormInput = ({ register, error, type, name, icon: Icon }: Props) => {
           id={name}
           type={inputType}
           placeholder=" "
-          className="peer border-2 border-gray-200 rounded-lg outline-none w-full py-3.5 px-12  transition-all duration-300 bg-white focus:bg-white"
+          className={cn(
+            "peer border-2 border-gray-200 rounded-lg outline-none w-full py-3.5 px-12  transition-all duration-300 bg-white focus:bg-white",
+            className
+          )}
           {...register(name)}
           autoComplete="off"
         />
