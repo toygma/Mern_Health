@@ -10,6 +10,10 @@ import AddresInformation from "./_components/AddresInformation";
 import EducationInformation from "./_components/EducationInformation";
 import ServiceInformation from "./_components/ServiceInformation";
 import WorkingInformation from "./_components/WorkingInformation";
+import { useAddDoctorMutation } from "../../../redux/api/doctor-api";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import AwardInformation from "./_components/AwardInformation";
 
 const AddDoctor = () => {
   const {
@@ -34,8 +38,7 @@ const AddDoctor = () => {
       experience: 0,
       about: "",
       education: [],
-      services: [],
-      hours: "",
+      services: "",
       address: {
         street: "",
         city: "",
@@ -46,7 +49,14 @@ const AddDoctor = () => {
       phone: "",
       fee: 0,
       patients: 0,
-      awards: [],
+      awards: [
+        {
+          title: "",
+          year: "",
+          description: "",
+          organization: "",
+        },
+      ],
       workingHours: [
         {
           dayOfWeek: 0,
@@ -93,8 +103,31 @@ const AddDoctor = () => {
       ],
     },
   });
+  const [
+    createDoctorMutation,
+    { error: doctorError, isLoading: doctorLoading, isSuccess },
+  ] = useAddDoctorMutation();
 
-  const onSubmit = () => {};
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Created successful");
+    } else if (doctorError && "data" in doctorError) {
+      toast.error((doctorError as any)?.data?.message || "Created failed!");
+    }
+  }, [isSuccess, doctorError]);
+
+  const onSubmit = async (data: TAddDoctorFormSchema) => {
+    try {
+      await createDoctorMutation({
+        ...data,
+        workingHours: data.workingHours.filter(
+          (item) => item.isWorking === true
+        ),
+      });
+    } catch (error) {
+      console.error("Error Login:", error);
+    }
+  };
   return (
     <div className="container mx-auto mt-12 px-4">
       <div className="mb-8 border-b border-gray-200">
@@ -106,7 +139,6 @@ const AddDoctor = () => {
         </p>
       </div>
       <div className="mt-12 flex justify-center">
-        {/* formu ortalamak için sadece justify-center yeterli */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white shadow-md rounded-lg p-8 w-full max-w-4xl"
@@ -126,6 +158,12 @@ const AddDoctor = () => {
             control={control}
           />
 
+          <AwardInformation
+            register={register}
+            error={errors}
+            control={control}
+          />
+
           <ServiceInformation
             error={errors}
             getValues={getValues}
@@ -133,7 +171,6 @@ const AddDoctor = () => {
           />
 
           <WorkingInformation
-            register={register}
             error={errors}
             control={control}
             setValues={setValue}
@@ -143,8 +180,8 @@ const AddDoctor = () => {
           <div className="mt-8 flex justify-end">
             <Button
               type="submit"
-              disabled={isSubmitting}
-              loading={isSubmitting}
+              disabled={isSubmitting || doctorLoading}
+              loading={isSubmitting || doctorLoading}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700  disabled:opacity-50"
             >
               {isSubmitting ? "Saving..." : "Add Doctor"}

@@ -18,7 +18,7 @@ export interface IWorkingHours {
   dayOfWeek: number;
   isWorking: boolean;
   startTime: string;
-  endTime: string;  
+  endTime: string;
 }
 
 // Ana Doktor arayüzü
@@ -45,7 +45,7 @@ export interface IDoctor extends Document {
   appointments: IAppointment[];
 
   appointmentDurationMinutes: number;
-  workingHours: IWorkingHours[];     
+  workingHours: IWorkingHours[];
 
   getJwtToken: () => string;
   comparePassword: (enteredPassword: string) => Promise<boolean>;
@@ -57,8 +57,17 @@ export interface IDoctor extends Document {
 const doctorSchema = new Schema<IDoctor>(
   {
     name: { type: String, required: [true, "İsim alanı zorunludur."] },
-    email: { type: String, required: [true, "E-posta alanı zorunludur."], unique: true },
-    password: { type: String, required: [true, "Şifre alanı zorunludur."], minlength: 6, select: false },
+    email: {
+      type: String,
+      required: [true, "E-posta alanı zorunludur."],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Şifre alanı zorunludur."],
+      minlength: 6,
+      select: false,
+    },
     speciality: { type: String },
     available: { type: Boolean, default: true },
     role: { type: String, default: "doctor" },
@@ -90,20 +99,27 @@ const doctorSchema = new Schema<IDoctor>(
     phone: { type: String },
     fee: { type: String },
     patients: { type: String },
-    awards: { type: String },
+    awards: [
+      {
+        title: { type: String },
+        year: { type: String },
+        description: { type: String },
+        organization: { type: String },
+      },
+    ],
     appointments: [{ type: Schema.Types.ObjectId, ref: "Appointment" }],
 
     appointmentDurationMinutes: {
       type: Number,
-      default: 30
+      default: 30,
     },
     workingHours: [
       {
-        dayOfWeek: { type: Number, required: true }, 
+        dayOfWeek: { type: Number, required: true },
         isWorking: { type: Boolean, default: false },
         startTime: { type: String, default: "09:00" },
-        endTime: { type: String, default: "17:00" },  
-      }
+        endTime: { type: String, default: "17:00" },
+      },
     ],
   },
   { timestamps: true }

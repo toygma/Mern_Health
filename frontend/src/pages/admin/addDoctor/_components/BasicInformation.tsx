@@ -38,7 +38,7 @@ const BasicInformation = ({
       item.name.toLowerCase().includes(value.toLowerCase())
     );
     if (value.trim() === "") {
-      setShowSuggestions(false); 
+      setShowSuggestions(false);
       setFilteredSpecialist(specialistData);
       return;
     }
@@ -186,6 +186,23 @@ const BasicInformation = ({
         )}
       </div>
 
+      {/* patients */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          patients ($)
+        </label>
+        <input
+          type="number"
+          {...register("patients", { valueAsNumber: true })}
+          placeholder="e.g. 100"
+          className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {error?.patients?.message && (
+          <p className="text-red-500 text-xs mt-1 ml-1">
+            {error.patients.message}
+          </p>
+        )}
+      </div>
       {/* About */}
       <div>
         <label className="block text-sm font-medium text-gray-700">About</label>

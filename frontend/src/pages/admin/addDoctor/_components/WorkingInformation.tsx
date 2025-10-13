@@ -1,12 +1,7 @@
-import {
-  useFieldArray,
-  type UseFormRegister,
-  type FieldErrors,
-} from "react-hook-form";
+import { useFieldArray, type FieldErrors } from "react-hook-form";
 import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
 
 interface WorkingInformationProps {
-  register: UseFormRegister<TAddDoctorFormSchema>;
   error: FieldErrors<TAddDoctorFormSchema>;
   control: any;
   setValues: any;
@@ -24,7 +19,6 @@ const daysOfWeek = [
 ];
 
 const WorkingInformation = ({
-  register,
   error,
   control,
   setValues,
@@ -95,6 +89,11 @@ const WorkingInformation = ({
           </div>
         </div>
       ))}
+      {error?.workingHours?.message && (
+        <p className="text-red-500 text-xs mt-1 ml-1">
+          {error?.workingHours.message}
+        </p>
+      )}
     </div>
   );
 };

@@ -19,7 +19,7 @@ export const AddDoctorFormSchema = z.object({
       })
     )
     .optional(),
-  services: z.array(z.string()).optional(),
+  services: z.string().optional(),
   hours: z.string().optional(),
   address: z
     .object({
@@ -41,7 +41,16 @@ export const AddDoctorFormSchema = z.object({
       endTime: z.string(),
     })
   ),
-  awards: z.array(z.string()).optional(),
+  awards: z
+    .array(
+      z.object({
+        title: z.string().min(1, "Title is required"),
+        year: z.string().min(1, "Year is required"),
+        description: z.string().optional(),
+        organization: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 export type TAddDoctorFormSchema = z.infer<typeof AddDoctorFormSchema>;

@@ -43,7 +43,7 @@ const addDoctor = async (req: Request, res: Response, next: NextFunction) => {
       fee,
       patients,
       awards,
-      timeSlots,
+      workingHours,
     } = req.body;
 
     if (!name || !email || !password) {
@@ -79,7 +79,7 @@ const addDoctor = async (req: Request, res: Response, next: NextFunction) => {
       fee,
       patients,
       awards,
-      timeSlots,
+      workingHours,
     });
 
     res.status(201).json({ success: true, doctor });
