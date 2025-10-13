@@ -1,9 +1,14 @@
 import { Navigate, Outlet } from "react-router";
 import { useAppSelector } from "../redux/hook";
+import Loading from "../components/Loading";
 
 export const ProtectedRoute = () => {
-    const { user } = useAppSelector((state) => state.auth);
-  
+  const { user, loading } = useAppSelector((state) => state.auth);
+  console.log("🚀 ~ ProtectedRoute ~ user:", user)
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (user) {
     return <Outlet />;
@@ -13,8 +18,12 @@ export const ProtectedRoute = () => {
 };
 
 export const GuestRoute = () => {
-    const { user } = useAppSelector((state) => state.auth);
-  
+  const { user, loading } = useAppSelector((state) => state.auth);
+  console.log("🚀 ~ GuestRoute ~ user:", user)
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (user) {
     return <Navigate to="/" replace />;
@@ -24,10 +33,14 @@ export const GuestRoute = () => {
 };
 
 export const ProtectedAdmin = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, loading } = useAppSelector((state) => state.auth);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   if (!user || user.role !== "admin") {
-    return <Navigate to="/" replace />; 
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

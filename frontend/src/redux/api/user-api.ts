@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setisAuthenticated, setLoading, setUser } from "../features/user-slice";
+import {
+  setisAuthenticated,
+  setLoading,
+  setUser,
+} from "../features/user-slice";
+import type { IUser } from "../../types/auth";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -9,17 +14,18 @@ export const userApi = createApi({
   }),
   tagTypes: ["User"],
   endpoints: (builder) => ({
-    getUser: builder.query({
+    getUser: builder.query<any, void>({
       query: () => "/me",
-      transformResponse: (response) => response.user,
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+      transformResponse: (response: { user: IUser }) => response.user,
+      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
         dispatch(setLoading(true));
         try {
           const { data } = await queryFulfilled;
           dispatch(setUser(data));
           dispatch(setisAuthenticated(true));
         } catch (error) {
-          //
+          dispatch(setUser(null));
+          dispatch(setisAuthenticated(false));
         } finally {
           dispatch(setLoading(false));
         }

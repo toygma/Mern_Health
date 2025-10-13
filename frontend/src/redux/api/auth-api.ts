@@ -22,7 +22,6 @@ interface AuthResponse {
   };
 }
 
-// Temel sorgu konfigürasyonu
 const baseQuery = fetchBaseQuery({
   baseUrl: `${import.meta.env.VITE_REACT_APP_API}/api/v1/auth`,
   credentials: "include",
@@ -43,7 +42,7 @@ export const authApi = createApi({
       async onQueryStarted(_args, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          dispatch(authApi.util.invalidateTags(["User"]));
+          await dispatch(userApi.endpoints.getUser.initiate());
         } catch (error) {
           console.error("Register hatası:", error);
         }
@@ -60,7 +59,7 @@ export const authApi = createApi({
       async onQueryStarted(_args, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          dispatch(authApi.util.invalidateTags(["User"]));
+           await dispatch(userApi.endpoints.getUser.initiate());
         } catch (error) {
           console.error("Login hatası:", error);
         }

@@ -7,20 +7,51 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../../../ui/FormInput";
 import { Lock, Mail } from "lucide-react";
 import Button from "../../../ui/Button";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useLoginMutation } from "../../../redux/api/auth-api";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [
+    loginMutation,
+    { error: loginError, isLoading: loginLoading, isSuccess },
+  ] = useLoginMutation();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<TLoginFormSchema>({
     resolver: zodResolver(LoginFormSchema),
     mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit = (data: TLoginFormSchema) => {
-    console.log("Form Verisi:", data);
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login successful");
+      reset();
+      navigate("/", { replace: true });
+    } else if (loginError && "data" in loginError) {
+      toast.error((loginError as any)?.data?.message || "Login failed!");
+    }
+  }, [isSuccess, navigate, reset, loginError]);
+
+  const onSubmit = async (data: TLoginFormSchema) => {
+    try {
+      await loginMutation({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+    } catch (error) {
+      console.error("Error Login:", error);
+    }
   };
   return (
     <div className=" flex items-center justify-center">
@@ -47,15 +78,20 @@ const Login = () => {
               icon={Lock}
             />
             <Button
-              children={"Login"}
-              className="py-2"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            />
+              type="submit"
+              className="py-3 mt-2"
+              loading={isSubmitting || loginLoading}
+              disabled={isSubmitting || loginLoading}
+            >
+              {loginLoading ? "Logging in..." : "Login"}
+            </Button>
           </form>
-            <div>
+          <div>
             <p>
-              Don't have an account? <Link to={"/sign-up"} className="underline text-blue-400">Sign Up</Link>
+              Don't have an account?{" "}
+              <Link to={"/sign-up"} className="underline text-blue-400">
+                Sign Up
+              </Link>
             </p>
           </div>
         </div>
