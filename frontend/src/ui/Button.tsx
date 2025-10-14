@@ -7,6 +7,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   type: "button" | "submit";
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 const Button = ({
@@ -15,10 +16,12 @@ const Button = ({
   children,
   disabled = false,
   loading = false,
+  onClick,
 }: Props) => {
   return (
     <button
       type={type}
+      onClick={onClick}
       className={cn(
         `border-2 border-primary text-dark text-center bg-transparent rounded-[15px] px-7 py-[3.5] font-medium transition-all duration-300 cursor-pointer drop-shadow-2xl  flex items-center justify-center gap-2 ${
           disabled

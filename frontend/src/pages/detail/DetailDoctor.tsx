@@ -18,8 +18,6 @@ import { useGetAllDetailQuery } from "../../redux/api/user-api";
 const DetailDoctor = () => {
   const { id } = useParams<{ id: string }>();
   const { data: doctor, isLoading } = useGetAllDetailQuery(id);
-  console.log("🚀 ~ DetailDoctor ~ doctor:", doctor?.doctor);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -270,7 +268,8 @@ const DetailDoctor = () => {
         </div>
       </div>
 
-      <DocBookings />
+    <DocBookings doctor={doctor.doctor} />
+
     </>
   );
 };
