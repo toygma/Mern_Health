@@ -4,6 +4,7 @@ import { ProtectedAdmin } from "./protected-route";
 import Loading from "../components/Loading";
 import AdminLayout from "../layouts/AdminLayout";
 import AddDoctor from "../pages/admin/addDoctor/AddDoctor";
+import Dashboard from "../pages/admin/dashboard/Dashboard";
 
 export const AdminRoutes = {
   path: "/admin",
@@ -13,6 +14,14 @@ export const AdminRoutes = {
     {
       element: <ProtectedAdmin />,
       children: [
+        {
+          path: "",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <Dashboard />
+            </Suspense>
+          ),
+        },
         {
           path: "add-doctor",
           element: (

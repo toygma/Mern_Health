@@ -40,6 +40,8 @@ export interface Doctor {
   }[];
 }
 
+
+
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
   baseQuery: fetchBaseQuery({
@@ -48,11 +50,18 @@ export const doctorApi = createApi({
   }),
   tagTypes: ["Doctor"],
   endpoints: (builder) => ({
-    getAllDoctors: builder.query<Doctor[], void>({
+    getAllDoctors: builder.query<any, void>({
       query: () => "/all-users",
       providesTags: ["Doctor"],
     }),
-    // örnek: bir doktor eklemek için mutation
+    getAllReviews: builder.query<any, void>({
+      query: () => "/all-reviews",
+      providesTags: ["Doctor"],
+    }),
+    getAllAppointments: builder.query<any, void>({
+      query: () => "/all-appointments",
+      providesTags: ["Doctor"],
+    }),
     addDoctor: builder.mutation<Doctor, Partial<Doctor>>({
       query: (doctor) => {
         return {
@@ -67,4 +76,9 @@ export const doctorApi = createApi({
 });
 
 // hooks export
-export const { useGetAllDoctorsQuery, useAddDoctorMutation } = doctorApi;
+export const {
+  useGetAllDoctorsQuery,
+  useAddDoctorMutation,
+  useGetAllReviewsQuery,
+  useGetAllAppointmentsQuery,
+} = doctorApi;

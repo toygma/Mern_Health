@@ -87,7 +87,7 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-4 relative">
             <Button
-            type="button"
+              type="button"
               children="Book an Appointment"
               className="py-2 lg:block hidden"
             />
@@ -103,7 +103,9 @@ const Header = () => {
 
                 {avatarMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">
-                    <span className="px-4 py-2 border-b">Welcome, {user.name}</span>
+                    <span className="px-4 py-2 border-b">
+                      Welcome, {user.name}
+                    </span>
                     <Link
                       onClick={() => setAvatarMenu(!avatarMenu)}
                       to={"/my-profile"}
@@ -111,6 +113,15 @@ const Header = () => {
                     >
                       My Profile
                     </Link>
+                    {user.role === "admin" && (
+                      <Link
+                        onClick={() => setAvatarMenu(!avatarMenu)}
+                        to={"/admin"}
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                      >
+                        Admin Panel
+                      </Link>
+                    )}
                     <Link
                       onClick={() => setAvatarMenu(!avatarMenu)}
                       to={"/my-appointment"}
@@ -129,7 +140,9 @@ const Header = () => {
               </div>
             ) : (
               <Link to={"/login"}>
-                <Button type="button" className="py-2">Sign In</Button>
+                <Button type="button" className="py-2">
+                  Sign In
+                </Button>
               </Link>
             )}
             <button
