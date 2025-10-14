@@ -40,8 +40,6 @@ export interface Doctor {
   }[];
 }
 
-
-
 export const doctorApi = createApi({
   reducerPath: "doctorApi",
   baseQuery: fetchBaseQuery({
@@ -50,7 +48,7 @@ export const doctorApi = createApi({
   }),
   tagTypes: ["Doctor"],
   endpoints: (builder) => ({
-    getAllDoctors: builder.query<any, void>({
+    getAllUsers: builder.query<any, void>({
       query: () => "/all-users",
       providesTags: ["Doctor"],
     }),
@@ -60,6 +58,10 @@ export const doctorApi = createApi({
     }),
     getAllAppointments: builder.query<any, void>({
       query: () => "/all-appointments",
+      providesTags: ["Doctor"],
+    }),
+    getAllDoctors: builder.query<any, void>({
+      query: () => "/all-doctors",
       providesTags: ["Doctor"],
     }),
     addDoctor: builder.mutation<Doctor, Partial<Doctor>>({
@@ -81,4 +83,5 @@ export const {
   useAddDoctorMutation,
   useGetAllReviewsQuery,
   useGetAllAppointmentsQuery,
+  useGetAllUsersQuery
 } = doctorApi;

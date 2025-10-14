@@ -4,7 +4,6 @@ import Loading from "../components/Loading";
 
 export const ProtectedRoute = () => {
   const { user, loading } = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ ProtectedRoute ~ user:", user)
 
   if (loading) {
     return <Loading />;
@@ -19,7 +18,6 @@ export const ProtectedRoute = () => {
 
 export const GuestRoute = () => {
   const { user, loading } = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ GuestRoute ~ user:", user)
 
   if (loading) {
     return <Loading />;

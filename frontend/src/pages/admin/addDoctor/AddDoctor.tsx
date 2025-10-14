@@ -14,6 +14,7 @@ import { useAddDoctorMutation } from "../../../redux/api/doctor-api";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import AwardInformation from "./_components/AwardInformation";
+import UploadImage from "./_components/UploadImage";
 
 const AddDoctor = () => {
   const {
@@ -31,10 +32,10 @@ const AddDoctor = () => {
       name: "",
       email: "",
       password: "",
+      images: [],
       speciality: "",
       available: true,
       role: "doctor",
-      images: [],
       experience: 0,
       about: "",
       education: [],
@@ -117,6 +118,7 @@ const AddDoctor = () => {
   }, [isSuccess, doctorError]);
 
   const onSubmit = async (data: TAddDoctorFormSchema) => {
+    console.log("🚀 ~ onSubmit ~ data:", data)
     try {
       await createDoctorMutation({
         ...data,
@@ -149,6 +151,8 @@ const AddDoctor = () => {
             getValues={getValues}
             setValues={setValue}
           />
+
+          <UploadImage  setValue={setValue} getValues={getValues} error={errors} />
 
           <AddresInformation register={register} error={errors} />
 

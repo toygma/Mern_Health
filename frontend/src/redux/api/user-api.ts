@@ -32,7 +32,17 @@ export const userApi = createApi({
       },
       providesTags: ["User"],
     }),
+    updateProfile: builder.mutation({
+      query({ id, body }) {
+        return {
+          url: `/${id}`,
+          method: "PUT",
+          body: body,
+        };
+      },
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
-export const { useGetUserQuery } = userApi;
+export const { useGetUserQuery, useUpdateProfileMutation } = userApi;

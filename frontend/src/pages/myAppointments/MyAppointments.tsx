@@ -1,7 +1,8 @@
 import { Clock, CreditCard, MapPin, X } from "lucide-react";
-import { doctors } from "../doctors/_components/dataDoctor";
 
 const MyAppointments = () => {
+
+  return;
   return (
    <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">

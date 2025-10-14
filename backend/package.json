@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "start:prod": "npm run build && npm start",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+   "seeder": "ts-node src/seeder/seeder.ts"
   },
   "keywords": [
     "express",

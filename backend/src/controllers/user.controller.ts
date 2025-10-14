@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import User, { IUser } from "../models/user.model";
 import sendToken from "../utils/sendToken";
 import Doctor, { IDoctor } from "../models/doctor.model";
+import { upload_file } from "../utils/cloudinary";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password,role,address } = req.body;
+    const { name, email, password, role, address } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -128,28 +129,35 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
+  const { name, email, phone, gender, dob, address, image } = req.body;
 
   try {
     const user = (await User.findById(id)) || (await Doctor.findById(id));
-
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    let uploadedImage: { public_id: string; url: string } | undefined;
+   if (image) {
+      const uploaded = await upload_file(image, "mern-health/patient");
+      uploadedImage = {
+        public_id: uploaded.public_id, 
+        url: uploaded.url,
+      };
+    }
+
+
+    const newUserData: any = { name, email, phone, gender, dob, address };
+    if (uploadedImage) newUserData.image = [uploadedImage]; 
+
     const Model: any = user.role === "doctor" ? Doctor : User;
-    const updatedUser = await Model.findByIdAndUpdate(
-      id,
-      { $set: req.body },
-      { new: true }
-    );
+
+    const updatedUser = await Model.findByIdAndUpdate(id, { $set: newUserData }, { new: true });
 
     return res.status(200).json({
       success: true,
       message: "Successfully updated",
-      data: updatedUser,
+      data: updatedUser, 
     });
   } catch (error) {
     console.error("Update Error:", error);

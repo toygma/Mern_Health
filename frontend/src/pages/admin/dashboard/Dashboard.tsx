@@ -9,8 +9,8 @@ import {
 } from "lucide-react";
 import {
   useGetAllAppointmentsQuery,
-  useGetAllDoctorsQuery,
   useGetAllReviewsQuery,
+  useGetAllUsersQuery,
 } from "../../../redux/api/doctor-api";
 import moment from "moment";
 import React from "react";
@@ -42,7 +42,7 @@ const StatCard = React.memo(
 );
 
 const Dashboard = () => {
-  const { data: doctorsData } = useGetAllDoctorsQuery();
+  const { data: doctorsData } = useGetAllUsersQuery();
   const { data: reviewsData } = useGetAllReviewsQuery();
   const {
     data: appointmentsData,

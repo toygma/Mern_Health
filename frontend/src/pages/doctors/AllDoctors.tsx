@@ -1,43 +1,55 @@
 import { useEffect, useState, useTransition } from "react";
 import { Circle, User } from "lucide-react";
 import { Link } from "react-router";
-import { doctors, type Doctor } from "./_components/dataDoctor";
 import Loading from "../../components/Loading";
+import { useGetAllDoctorsQuery } from "../../redux/api/doctor-api";
+import type { Doctor } from "./_components/dataDoctor";
+import { generateSlugify } from "../../utils/helper";
 
 const categories = [
   { id: "all", name: "All Doctors", icon: "👨‍⚕️" },
-  { id: "dermatologist", name: "Dermatology", icon: "🔬" },
-  { id: "pediatrician", name: "Pediatrics", icon: "👶" },
-  { id: "cardiologist", name: "Cardiology", icon: "❤️" },
-  { id: "orthopedist", name: "Orthopedics", icon: "🦴" },
-  { id: "neurologist", name: "Neurology", icon: "🧠" },
+  { id: "cardiologist", name: "Cardiologist", icon: "❤️" },
+  { id: "dermatologist", name: "Dermatologist", icon: "🔬" },
+  { id: "pediatrician", name: "Pediatrician", icon: "👶" },
+  { id: "neurologist", name: "Neurologist", icon: "🧠" },
+  { id: "orthopedic_surgeon", name: "Orthopedic Surgeon", icon: "🦴" },
+  { id: "ophthalmologist", name: "Ophthalmologist", icon: "👁️" },
+  { id: "psychiatrist", name: "Psychiatrist", icon: "💭" },
+  { id: "endocrinologist", name: "Endocrinologist", icon: "🧬" },
+  { id: "gastroenterologist", name: "Gastroenterologist", icon: "🍽️" },
+  { id: "dentist", name: "Dentist", icon: "🦷" },
 ];
+
 const AllDoctors = () => {
   const [isPending, startTransition] = useTransition();
+  const { data: doctors, isLoading } = useGetAllDoctorsQuery();
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [filterDoctor, setFilterDoctor] = useState<Doctor[]>([]);
 
   useEffect(() => {
+    if (!doctors?.data) return;
+
     startTransition(() => {
       const filteredDoctors =
         selectedCategory === "all"
-          ? doctors
-          : doctors.filter((doc) => doc.category === selectedCategory);
-          setFilterDoctor(filteredDoctors);
-        });
-  }, [selectedCategory]);
+          ? doctors.data
+          : doctors.data.filter(
+              (doc: any) =>
+                doc?.speciality?.toLowerCase() === selectedCategory.toLowerCase()
+            );
+      setFilterDoctor(filteredDoctors);
+    });
+  }, [selectedCategory, doctors]);
 
-  if (isPending) {
+  if (isLoading || isPending) {
     return <Loading />;
   }
 
   return (
-    // Ana Kapsayıcı: Kenar boşlukları ve maksimum genişlik eklendi
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="flex flex-col md:flex-row md:gap-8 lg:gap-12">
-        {/* Sol Taraf - Kategoriler (Sidebar) */}
-        {/* md:flex-shrink-0: Geniş ekranlarda kenar çubuğunun sıkışmasını önler */}
+        {/* Sidebar - Categories */}
         <aside className="w-full md:w-72 lg:w-80 md:flex-shrink-0 mb-8 md:mb-0">
           <div className="bg-white shadow-xl rounded-2xl p-4 sm:p-6 h-full">
             <div className="mb-6">
@@ -48,6 +60,7 @@ const AllDoctors = () => {
                 Filter to search
               </p>
             </div>
+
             <div className="flex gap-2 overflow-x-auto md:flex-col md:overflow-x-visible pb-2 md:pb-0 -mx-2 px-2">
               {categories.map((cat) => (
                 <button
@@ -67,7 +80,7 @@ const AllDoctors = () => {
           </div>
         </aside>
 
-        {/* Sağ Taraf - Doktorlar */}
+        {/* Main Content - Doctors */}
         <main className="flex-1 min-w-0">
           <div className="mb-6 lg:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
@@ -80,19 +93,18 @@ const AllDoctors = () => {
             </p>
           </div>
 
-          {/* Doktor Kartları Grid'i */}
+          {/* Doctor Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {filterDoctor.map((doctor) => (
-              // Kartın tamamı artık bir Link
               <Link
-                to={`/doctor/${doctor.href}/${doctor.id}`}
-                key={doctor.id}
+                to={`/doctor/${generateSlugify(doctor.name)}/${doctor._id}`}
+                key={doctor._id}
                 className="group block"
               >
                 <div className="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:transform group-hover:scale-105 h-full flex flex-col">
                   <div className="relative">
                     <img
-                      src={doctor.image}
+                      src={doctor?.images[0]?.url}
                       alt={doctor.name}
                       className="w-full h-52 object-cover"
                     />
@@ -112,16 +124,14 @@ const AllDoctors = () => {
                     </div>
                   </div>
 
-                  {/* flex-1 ve flex-col ile kart içeriği dikeyde esner, buton aşağıda kalır */}
                   <div className="p-4 sm:p-5 flex-1 flex flex-col">
                     <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 truncate">
                       {doctor.name}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
-                      {doctor.categoryName}
+                      {doctor.speciality}
                     </p>
 
-                    {/* mt-auto: Bu butonu kartın en altına iter */}
                     <div
                       className={`w-full mt-auto text-center py-2.5 px-4 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base ${
                         doctor.available
@@ -137,7 +147,7 @@ const AllDoctors = () => {
             ))}
           </div>
 
-          {/* Doktor Bulunamadığında Gösterilecek Mesaj */}
+          {/* No Doctors Found */}
           {filterDoctor.length === 0 && (
             <div className="text-center text-gray-500 mt-20 py-10">
               <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />

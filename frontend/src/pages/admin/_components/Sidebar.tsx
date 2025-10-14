@@ -2,8 +2,6 @@ import { Link, useLocation } from "react-router";
 import {
   Home,
   UserPlus,
-  FileText,
-  Calendar,
   LogOut,
   LayoutDashboard,
   Menu,
@@ -25,18 +23,7 @@ const data = [
     path: "/admin/add-doctor",
     icon: <UserPlus size={20} />,
   },
-  {
-    id: 3,
-    title: "Reviews",
-    path: "/admin/reviews",
-    icon: <FileText size={20} />,
-  },
-  {
-    id: 4,
-    title: "Appointments",
-    path: "/admin/appointments",
-    icon: <Calendar size={20} />,
-  },
+  
 ];
 
 const Sidebar = () => {

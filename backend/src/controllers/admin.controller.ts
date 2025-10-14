@@ -3,6 +3,7 @@ import User from "../models/user.model";
 import Doctor from "../models/doctor.model";
 import Review from "../models/review.model";
 import Appointment from "../models/appointment.model";
+import { upload_file } from "../utils/cloudinary";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -63,6 +64,11 @@ const addDoctor = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
+    const uploadPromises = images.map((image:any) =>
+      upload_file(image, "mern-health/doctors")
+    );
+    const urls = await Promise.all(uploadPromises);
+
     const doctor = await Doctor.create({
       name,
       email,
@@ -70,7 +76,7 @@ const addDoctor = async (req: Request, res: Response, next: NextFunction) => {
       speciality,
       available,
       role,
-      images,
+      images:urls,
       experience,
       about,
       education,
@@ -128,4 +134,27 @@ const getAllAppointment = async (
   }
 };
 
-export { getAllUsers, addDoctor, getAllReviews, getAllAppointment };
+const getAllDoctors = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const doctors = await Doctor.find({});
+
+    return res.status(200).json({
+      success: true,
+      data: doctors,
+    });
+  } catch (error: any) {
+    console.error("getConfirmedAppointments error:", error.message);
+    next(error);
+  }
+};
+export {
+  getAllUsers,
+  addDoctor,
+  getAllReviews,
+  getAllAppointment,
+  getAllDoctors,
+};
