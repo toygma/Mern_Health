@@ -133,7 +133,6 @@ const DocBookings = ({ doctor }: DocBookingsProps) => {
         timeSlot: slot.time,
         reason: reason || "General Consultation",
       }).unwrap();
-      toast.success("Appointment successful");
     } catch (err: any) {
       toast.error(err?.data?.message || "Appointment failed!");
     } finally {

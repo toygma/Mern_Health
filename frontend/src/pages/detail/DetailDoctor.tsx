@@ -14,6 +14,7 @@ import {
 import DocBookings from "./_components/DocBookings";
 import Loading from "../../components/Loading";
 import { useGetAllDetailQuery } from "../../redux/api/user-api";
+import Reviews from "./_components/Reviews";
 
 const DetailDoctor = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,7 +81,7 @@ const DetailDoctor = () => {
                     <div className="flex items-center gap-1">
                       <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                       <span className="font-semibold text-gray-900">
-                        {doctor.doctor.totalRating ?? "4.8"}
+                        {doctor.doctor.averageRating ?? "4.8"}
                       </span>
                       <span className="text-gray-500 text-sm">
                         ({doctor.doctor.reviews?.length ?? "124"} reviews)
@@ -231,45 +232,46 @@ const DetailDoctor = () => {
                   Send Message
                 </button>
               </div>
-            {/* Quick Stats */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Quick Stats
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-xl">
-                  <p className="text-3xl font-bold text-blue-600">
-                    {doctor.doctor.patients || "500"}+
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Patients</p>
-                </div>
-                <div className="text-center p-4 bg-green-50 rounded-xl">
-                  <p className="text-3xl font-bold text-green-600">
-                    {doctor.doctor.experience.slice(0,2) || "10"}+
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Years Exp</p>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-xl">
-                  <p className="text-3xl font-bold text-purple-600">
-                    {doctor.doctor.awards.length || "15"}+
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Awards</p>
-                </div>
-                <div className="text-center p-4 bg-yellow-50 rounded-xl">
-                  <p className="text-3xl font-bold text-yellow-600">
-                    {doctor.doctor.totalRating || "4.8"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">Rating</p>
+              {/* Quick Stats */}
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Quick Stats
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-blue-50 rounded-xl">
+                    <p className="text-3xl font-bold text-blue-600">
+                      {doctor.doctor.patients || "500"}+
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Patients</p>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-xl">
+                    <p className="text-3xl font-bold text-green-600">
+                      {doctor.doctor.experience.slice(0, 2) || "10"}+
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Years Exp</p>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-xl">
+                    <p className="text-3xl font-bold text-purple-600">
+                      {doctor.doctor.awards.length || "15"}+
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Awards</p>
+                  </div>
+                  <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                    <p className="text-3xl font-bold text-yellow-600">
+                      {doctor.doctor.totalRating || "4.8"}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Rating</p>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
           </div>
         </div>
       </div>
 
-    <DocBookings doctor={doctor.doctor} />
+      <DocBookings doctor={doctor.doctor} />
 
+      <Reviews id={id}/>
     </>
   );
 };

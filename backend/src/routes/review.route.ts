@@ -6,9 +6,9 @@ const reviewRouter = express.Router({ mergeParams: true });
 
 reviewRouter.get("/", isAuthenticatedUser, getAllReviews);
 
-reviewRouter.post("/", isAuthenticatedUser, createReview);
+reviewRouter.post("/:id", isAuthenticatedUser, createReview);
 
-reviewRouter.delete("/", isAuthenticatedUser, deleteReview);
+reviewRouter.delete("/:id", isAuthenticatedUser, deleteReview);
 
 
 export default reviewRouter;

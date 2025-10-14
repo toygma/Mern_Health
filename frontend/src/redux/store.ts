@@ -4,6 +4,7 @@ import userReducer from "./features/user-slice";
 import { userApi } from "./api/user-api";
 import { doctorApi } from "./api/doctor-api";
 import { appointmentApi } from "./api/appointment-api";
+import { reviewsApi } from "./api/reviews-api";
 
 export const store = configureStore({
   reducer: {
@@ -12,9 +13,16 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [doctorApi.reducerPath]: doctorApi.reducer,
     [appointmentApi.reducerPath]: appointmentApi.reducer,
+    [reviewsApi.reducerPath]: reviewsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([authApi.middleware, userApi.middleware,doctorApi.middleware,appointmentApi.middleware]),
+    getDefaultMiddleware().concat([
+      authApi.middleware,
+      userApi.middleware,
+      doctorApi.middleware,
+      appointmentApi.middleware,
+      reviewsApi.middleware,
+    ]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

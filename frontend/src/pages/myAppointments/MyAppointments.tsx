@@ -97,7 +97,7 @@ const MyAppointments = () => {
                           <div>
                             <p className="text-sm text-gray-500 mb-0.5">Date & Time</p>
                             <p className="text-gray-800 font-semibold">
-                              {moment(item?.date).format("L")}
+                              {moment(item?.date).format("L")} - {item.timeSlot}
                             </p>
                           </div>
                         </div>
