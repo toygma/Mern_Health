@@ -18,6 +18,15 @@ export const appointmentApi = createApi({
       },
       invalidatesTags: ["Appointment"],
     }),
+    deleteAppointment: builder.mutation<any, any>({
+      query: ({ id }) => {
+        return {
+          url: `/${id}/cancel`,
+          method: "PUT",
+        };
+      },
+      invalidatesTags: ["Appointment"],
+    }),
     getMeAppointment: builder.query<any, void>({
       query: () => "/users",
       providesTags: ["Appointment"],
@@ -25,4 +34,8 @@ export const appointmentApi = createApi({
   }),
 });
 
-export const { useCreateAppointmentMutation ,useGetMeAppointmentQuery} = appointmentApi;
+export const {
+  useCreateAppointmentMutation,
+  useGetMeAppointmentQuery,
+  useDeleteAppointmentMutation,
+} = appointmentApi;

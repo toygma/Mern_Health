@@ -193,20 +193,21 @@ const cancelAppointment = async (
       });
     }
 
-    appointment.status = "cancelled";
-    await appointment.save();
+    await Doctor.findByIdAndUpdate(appointment.doctor, {
+      $pull: { appointments: appointment._id },
+    });
+
+    await Appointment.deleteOne({ _id: appointmentId });
 
     res.status(200).json({
       success: true,
       message: "Appointment cancelled successfully",
-      data: appointment,
     });
   } catch (error) {
     console.error("Cancel Appointment Error:", error);
     next(error);
   }
 };
-
 const confirmAppointment = async (
   req: Request,
   res: Response,
