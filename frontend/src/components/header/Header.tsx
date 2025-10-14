@@ -94,12 +94,21 @@ const Header = () => {
             {user ? (
               <div className="relative lg:inline-block hidden">
                 {/* Avatar */}
-                <img
-                  src={authPng}
-                  alt="avatar"
-                  className="w-12 h-12 object-cover rounded-full cursor-pointer"
-                  onClick={() => setAvatarMenu(!avatarMenu)}
-                />
+                {user?.image[0]?.url ? (
+                  <img
+                    src={user?.image[0]?.url}
+                    alt="avatar"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
+                    onClick={() => setAvatarMenu(!avatarMenu)}
+                  />
+                ) : (
+                  <img
+                    src={authPng}
+                    alt="avatar"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
+                    onClick={() => setAvatarMenu(!avatarMenu)}
+                  />
+                )}
 
                 {avatarMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">

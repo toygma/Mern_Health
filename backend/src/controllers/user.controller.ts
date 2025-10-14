@@ -134,30 +134,35 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = (await User.findById(id)) || (await Doctor.findById(id));
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     let uploadedImage: { public_id: string; url: string } | undefined;
-   if (image) {
+    if (image) {
       const uploaded = await upload_file(image, "mern-health/patient");
       uploadedImage = {
-        public_id: uploaded.public_id, 
+        public_id: uploaded.public_id,
         url: uploaded.url,
       };
     }
 
-
     const newUserData: any = { name, email, phone, gender, dob, address };
-    if (uploadedImage) newUserData.image = [uploadedImage]; 
+    if (uploadedImage) newUserData.image = [uploadedImage];
 
     const Model: any = user.role === "doctor" ? Doctor : User;
 
-    const updatedUser = await Model.findByIdAndUpdate(id, { $set: newUserData }, { new: true });
+    const updatedUser = await Model.findByIdAndUpdate(
+      id,
+      { $set: newUserData },
+      { new: true }
+    );
 
     return res.status(200).json({
       success: true,
       message: "Successfully updated",
-      data: updatedUser, 
+      data: updatedUser,
     });
   } catch (error) {
     console.error("Update Error:", error);
@@ -232,4 +237,40 @@ const getMeProfile = async (
   }
 };
 
-export { register, login, logout, getMeProfile, updateUser, deleteUser };
+// ==================== GET DETAIL ====================
+const getDetailProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(401).json({
+        success: false,
+        message: "id not found",
+      });
+    }
+
+    const doctor = await Doctor.findById(id);
+
+    return res.status(200).json({
+      success: true,
+      doctor,
+    });
+  } catch (error) {
+    console.error("Get Doctor Detail Error:", error);
+    next(error);
+  }
+};
+
+export {
+  register,
+  login,
+  logout,
+  getMeProfile,
+  updateUser,
+  deleteUser,
+  getDetailProfile,
+};

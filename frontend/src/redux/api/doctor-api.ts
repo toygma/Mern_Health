@@ -64,6 +64,7 @@ export const doctorApi = createApi({
       query: () => "/all-doctors",
       providesTags: ["Doctor"],
     }),
+ 
     addDoctor: builder.mutation<Doctor, Partial<Doctor>>({
       query: (doctor) => {
         return {
@@ -83,5 +84,5 @@ export const {
   useAddDoctorMutation,
   useGetAllReviewsQuery,
   useGetAllAppointmentsQuery,
-  useGetAllUsersQuery
+  useGetAllUsersQuery,
 } = doctorApi;
