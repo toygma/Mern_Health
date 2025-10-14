@@ -12,6 +12,9 @@ import appointmentRouter from "./routes/appointment.route";
 
 const app: Express = express();
 
+//path deploy
+import path from "path";
+const __dirname = path.resolve();
 // Middleware
 app.use(requestLogger);
 app.use(express.json({ limit: "50mb" }));
@@ -34,5 +37,15 @@ app.use("/api/v1/appointment", appointmentRouter);
 
 // Error Handler (must be last)
 app.use(errorHandler);
+
+//deploy
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    const indexPath = path.resolve(__dirname, "../frontend/dist/index.html");
+    res.sendFile(indexPath);
+  });
+}
 
 export default app;

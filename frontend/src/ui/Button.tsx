@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactNode;
   disabled?: boolean;
   loading?: boolean;
-  type: "button" | "submit";
+  type: any;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 

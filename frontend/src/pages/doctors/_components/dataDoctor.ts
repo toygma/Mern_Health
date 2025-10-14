@@ -1,5 +1,3 @@
-import { generateSlugify } from "../../../utils/helper";
-import { doctorImages } from "./imageData";
 
 export interface DoctorSlot {
   id: number;

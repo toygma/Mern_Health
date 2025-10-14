@@ -35,8 +35,8 @@ const Hero = () => {
           className="absolute opacity-40 -z-10 left-0 bottom-0 float"
         />
         <div className="flex gap-4 items-center">
-          <Button children="About Us" className="py-4 bg-primary text-white" />
-          <Button children="Book an Appointment" className="py-4" />
+          <Button type="button" children="About Us" className="py-4 bg-primary text-white" />
+          <Button type="button"  children="Book an Appointment" className="py-4" />
         </div>
         <div className="mt-24 flex items-center gap-4">
           <img src={modal} alt="modal" className="" />
