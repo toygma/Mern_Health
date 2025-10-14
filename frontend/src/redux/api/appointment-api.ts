@@ -1,8 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-
-export const doctorApi = createApi({
-  reducerPath: "doctorApi",
+export const appointmentApi = createApi({
+  reducerPath: "appointmentApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_REACT_APP_API}/api/v1/appointment`,
     credentials: "include",
@@ -19,7 +18,11 @@ export const doctorApi = createApi({
       },
       invalidatesTags: ["Appointment"],
     }),
+    getMeAppointment: builder.query<any, void>({
+      query: () => "/users",
+      providesTags: ["Appointment"],
+    }),
   }),
 });
 
-export const {useCreateAppointmentMutation} = doctorApi;
+export const { useCreateAppointmentMutation ,useGetMeAppointmentQuery} = appointmentApi;

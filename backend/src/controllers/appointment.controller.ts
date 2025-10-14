@@ -127,7 +127,8 @@ const getUserAppointments = async (
     }
 
     const appointments = await Appointment.find({ user: userId })
-      .populate("doctor", "name speciality images fee")
+      .populate("user")
+      .populate("doctor")
       .sort({ date: 1 });
 
     res.status(200).json({

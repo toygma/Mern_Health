@@ -1,32 +1,46 @@
 import { Clock, CreditCard, MapPin, X } from "lucide-react";
-
+import { useGetMeAppointmentQuery } from "../../redux/api/appointment-api";
+import moment from "moment";
 const MyAppointments = () => {
+  const { data } = useGetMeAppointmentQuery();
+  console.log("🚀 ~ MyAppointments ~ data:", data);
 
-  return;
   return (
-   <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">My Appointments</h2>
-          <p className="text-gray-500 text-lg">Manage your upcoming medical appointments</p>
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+            My Appointments
+          </h2>
+          <p className="text-gray-500 text-lg">
+            Manage your upcoming medical appointments
+          </p>
         </div>
 
         {/* Appointments Grid */}
         <div className="space-y-6">
-          {doctors.map((item) => (
+          {data?.data?.map((item: any) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-gray-100"
             >
               <div className="flex flex-col md:flex-row">
                 {/* Doctor Image */}
                 <div className="md:w-1/4 h-64 md:h-auto bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
+                  {item.doctor.images?.length > 0 ? (
+                      <img
+                        src={item.doctor.images[0].url}
+                        alt={item.doctor.name}
+                        className="w-full h-full rounded-2xl border-4 border-white shadow-lg object-cover"
+                      />
+                    ) : (
+                      <img
+                        src="https://via.placeholder.com/200"
+                        alt={item.doctor.name}
+                        className="w-32 h-32 rounded-2xl border-4 border-white shadow-lg object-cover"
+                      />
+                    )}
                 </div>
 
                 {/* Doctor Info */}
@@ -34,10 +48,10 @@ const MyAppointments = () => {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                        {item.name}
+                        {item?.doctor?.name}
                       </h3>
                       <p className="text-blue-600 font-semibold text-lg">
-                        {item.categoryName}
+                        {item?.doctor?.speciality}
                       </p>
                     </div>
 
@@ -47,8 +61,12 @@ const MyAppointments = () => {
                       <div className="flex items-start gap-3">
                         <MapPin className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm text-gray-500 mb-0.5">Address</p>
-                          <p className="text-gray-800">{item.address}</p>
+                          <p className="text-sm text-gray-500 mb-0.5">
+                            Address
+                          </p>
+                          <p className="text-gray-800">
+                            {item?.doctor?.address?.city}
+                          </p>
                         </div>
                       </div>
 
@@ -56,9 +74,11 @@ const MyAppointments = () => {
                       <div className="flex items-start gap-3">
                         <Clock className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm text-gray-500 mb-0.5">Date & Time</p>
+                          <p className="text-sm text-gray-500 mb-0.5">
+                            Date & Time
+                          </p>
                           <p className="text-gray-800 font-semibold">
-                            24,July 2042 | 8:30 PM
+                            {moment(item?.date).format("L")}
                           </p>
                         </div>
                       </div>
