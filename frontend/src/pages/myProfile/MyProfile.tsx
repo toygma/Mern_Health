@@ -141,8 +141,16 @@ const MyProfile = () => {
                   </div>
                 ) : (
                   <img
-                    src={userData?.image?.url || userData?.image[0]?.url}
-                    alt={watchAll.name}
+                    src={
+                      Array.isArray(userData?.image)
+                        ? userData.image[0]?.url
+                        : typeof userData?.image === "object"
+                        ? userData?.image?.url
+                        : typeof userData?.image === "string"
+                        ? userData?.image
+                        : "https://via.placeholder.com/150"
+                    }
+                    alt={watchAll.name || "profile"}
                     className="w-32 h-32 rounded-2xl border-4 border-white shadow-lg object-cover"
                   />
                 )}

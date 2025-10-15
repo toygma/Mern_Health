@@ -6,6 +6,7 @@ import MobileHeader from "./_components/MobileHeader";
 import { data } from "./_components/dataHeader";
 import authPng from "/user.png";
 import { useAppSelector } from "../../redux/hook";
+import { useLogoutMutation } from "../../redux/api/auth-api";
 
 const Header = () => {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
@@ -15,15 +16,9 @@ const Header = () => {
 
   const { user } = useAppSelector((state) => state.auth);
 
+  const [logout] = useLogoutMutation();
+
   const activeDropdown = data.find((item) => item.id === activeItemId);
-
-  const imageUrl =
-  Array.isArray(user?.image) ? user.image[0]?.url :
-  typeof user?.image === "object" ? user.image?.url :
-  typeof user?.image === "string" ? user.image :
-  null;
-
-  
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-lg z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,13 +97,23 @@ const Header = () => {
             {user ? (
               <div className="relative lg:inline-block hidden">
                 {/* Avatar */}
-               <img
-  src={imageUrl || authPng}
-  alt="avatar"
-  className="w-12 h-12 object-cover rounded-full cursor-pointer"
-  onClick={() => setAvatarMenu(!avatarMenu)}
-/>
-
+                {Array.isArray(user?.image) &&
+                user.image.length > 0 &&
+                user.image[0]?.url ? (
+                  <img
+                    src={user.image[0].url}
+                    alt="avatar"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
+                    onClick={() => setAvatarMenu(!avatarMenu)}
+                  />
+                ) : (
+                  <img
+                    src={authPng}
+                    alt="avatar"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
+                    onClick={() => setAvatarMenu(!avatarMenu)}
+                  />
+                )}
 
                 {avatarMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">
@@ -139,7 +144,15 @@ const Header = () => {
                       My Appointment
                     </Link>
                     <button
-                      onClick={() => setAvatarMenu(!avatarMenu)}
+                      onClick={async () => {
+                        try {
+                          await logout();
+                          navigate(0);
+                          setAvatarMenu(false);
+                        } catch (error) {
+                          console.error("Logout failed:", error);
+                        }
+                      }}
                       className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 cursor-pointer"
                     >
                       Logout
