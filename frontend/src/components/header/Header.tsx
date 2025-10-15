@@ -16,6 +16,14 @@ const Header = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   const activeDropdown = data.find((item) => item.id === activeItemId);
+
+  const imageUrl =
+  Array.isArray(user?.image) ? user.image[0]?.url :
+  typeof user?.image === "object" ? user.image?.url :
+  typeof user?.image === "string" ? user.image :
+  null;
+
+  
   return (
     <header className="fixed top-0 left-0 w-full bg-white shadow-lg z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,21 +102,13 @@ const Header = () => {
             {user ? (
               <div className="relative lg:inline-block hidden">
                 {/* Avatar */}
-                {user?.image[0]?.url ? (
-                  <img
-                    src={user?.image[0]?.url}
-                    alt="avatar"
-                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
-                    onClick={() => setAvatarMenu(!avatarMenu)}
-                  />
-                ) : (
-                  <img
-                    src={authPng}
-                    alt="avatar"
-                    className="w-12 h-12 object-cover rounded-full cursor-pointer"
-                    onClick={() => setAvatarMenu(!avatarMenu)}
-                  />
-                )}
+               <img
+  src={imageUrl || authPng}
+  alt="avatar"
+  className="w-12 h-12 object-cover rounded-full cursor-pointer"
+  onClick={() => setAvatarMenu(!avatarMenu)}
+/>
+
 
                 {avatarMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white  rounded-lg shadow-md overflow-hidden z-50 flex flex-col">
