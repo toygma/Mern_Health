@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import {
   SignUpFormSchema,
   type TSignUpFormSchema,
@@ -13,6 +13,16 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import SelectInput from "../../../ui/SelectInput";
 
+const daysOfWeek = [
+  { label: "Monday", value: 1 },
+  { label: "Tuesday", value: 2 },
+  { label: "Wednesday", value: 3 },
+  { label: "Thursday", value: 4 },
+  { label: "Friday", value: 5 },
+  { label: "Saturday", value: 6 },
+  { label: "Sunday", value: 0 },
+];
+
 const SignUp = () => {
   const navigate = useNavigate();
   const [
@@ -23,6 +33,8 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    control,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<TSignUpFormSchema>({
@@ -34,12 +46,25 @@ const SignUp = () => {
       password: "",
       confirmpassword: "",
       role: "patient",
+      workingHours: daysOfWeek.map((d) => ({
+        dayOfWeek: d.value,
+        isWorking: false,
+        startTime: "09:00",
+        endTime: "17:00",
+      })),
     },
+  });
+
+  const watchedRole = watch("role");
+
+  const { fields } = useFieldArray({
+    control,
+    name: "workingHours",
   });
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("registration successful");
+      toast.success("Registration successful");
       reset();
       navigate("/login", { replace: true });
     } else if (registerError && "data" in registerError) {
@@ -51,23 +76,18 @@ const SignUp = () => {
 
   const onSubmit = async (data: TSignUpFormSchema) => {
     try {
-      await registerMutation({
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        role: data.role,
-      }).unwrap();
+      await registerMutation(data).unwrap();
     } catch (error) {
-      console.error("Kayıt hatası:", error);
+      console.error("Registration error:", error);
     }
   };
 
   return (
-    <div className=" flex items-center justify-center">
+    <div className="flex items-center justify-center">
       <div className="bg-white rounded-2xl w-[450px]">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl!">Register Now.</h1>
-          <p>Secure,quick, and easy</p>
+        <div className="flex flex-col gap-2 p-6">
+          <h1 className="text-2xl font-bold">Register Now.</h1>
+          <p>Secure, quick, and easy</p>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 mt-4"
@@ -100,7 +120,40 @@ const SignUp = () => {
               icon={Lock}
               type="password"
             />
+
             <SelectInput register={register} name="role" />
+
+            {watchedRole === "doctor" && (
+              <div className="border p-4 rounded-lg mt-4 bg-gray-50">
+                <h3 className="font-semibold mb-2">Working Hours</h3>
+                {fields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="flex items-center gap-2 mb-2"
+                  >
+                    <span className="w-20">{daysOfWeek[index].label}</span>
+                    <label className="flex items-center gap-1">
+                      <input
+                        type="checkbox"
+                        {...register(`workingHours.${index}.isWorking`)}
+                      />
+                      Working
+                    </label>
+                    <input
+                      type="time"
+                      {...register(`workingHours.${index}.startTime`)}
+                      className="border px-2 py-1 rounded w-24"
+                    />
+                    <input
+                      type="time"
+                      {...register(`workingHours.${index}.endTime`)}
+                      className="border px-2 py-1 rounded w-24"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
             <Button
               type="submit"
               className="py-3 mt-2"
@@ -111,7 +164,7 @@ const SignUp = () => {
             </Button>
           </form>
           <div>
-            <p>
+            <p className="mt-2">
               Do you have an account?{" "}
               <Link to={"/login"} className="underline text-blue-400">
                 Login

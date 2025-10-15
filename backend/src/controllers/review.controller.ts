@@ -8,9 +8,19 @@ const getAllReviews = async (
   next: NextFunction
 ) => {
   try {
-    const reviews = await Review.find({})
+    const { id: doctorId } = req.params;
+
+    if (!doctorId) {
+      return res.status(400).json({
+        success: false,
+        message: "Doctor ID is required.",
+      });
+    }
+
+    const reviews = await Review.find({ doctor: doctorId })
       .populate("user", "name email")
-      .populate("doctor", "name speciality");
+      .populate("doctor", "name speciality")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -38,8 +48,7 @@ const createReview = async (
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message:
-          "You must log in to review (User ID missing).",
+        message: "You must log in to review (User ID missing).",
       });
     }
 
@@ -87,7 +96,7 @@ const deleteReview = async (
   next: NextFunction
 ) => {
   try {
-    const { id:reviewId } = req.params;
+    const { id: reviewId } = req.params;
     const userId = req?.user?._id;
 
     if (!userId) {
@@ -105,7 +114,7 @@ const deleteReview = async (
     }
 
     const review = await Review.findById(reviewId);
-    console.log("🚀 ~ deleteReview ~ review:", review)
+    console.log("🚀 ~ deleteReview ~ review:", review);
 
     if (!review) {
       return res.status(404).json({

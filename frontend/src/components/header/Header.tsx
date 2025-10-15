@@ -136,6 +136,15 @@ const Header = () => {
                         Admin Panel
                       </Link>
                     )}
+                    {user.role === "doctor" && (
+                      <Link
+                        onClick={() => setAvatarMenu(!avatarMenu)}
+                        to={`/doctor/${user?._id}`}
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                      >
+                        Doctor Panel
+                      </Link>
+                    )}
                     <Link
                       onClick={() => setAvatarMenu(!avatarMenu)}
                       to={"/my-appointment"}

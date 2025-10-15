@@ -27,6 +27,19 @@ export const SignUpFormSchema = z
       error: () => ({ message: "Role must be either doctor or patient." }),
     }),
 
+    workingHours: z.array(
+      z.object({
+        dayOfWeek: z.number().min(0).max(6),
+        isWorking: z.boolean(),
+        startTime: z
+          .string()
+          .regex(/^([0-1]\d|2[0-3]):([0-5]\d)$/, "Invalid time"),
+        endTime: z
+          .string()
+          .regex(/^([0-1]\d|2[0-3]):([0-5]\d)$/, "Invalid time"),
+      })
+    ),
+
     password: z
       .string({
         error: "Password is required.",

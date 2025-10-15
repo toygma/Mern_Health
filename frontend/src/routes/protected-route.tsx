@@ -43,3 +43,18 @@ export const ProtectedAdmin = () => {
 
   return <Outlet />;
 };
+
+
+export const ProtectedDoctor = () => {
+  const { user, loading } = useAppSelector((state) => state.auth);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!user || user.role !== "doctor") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};

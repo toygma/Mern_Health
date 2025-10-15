@@ -74,7 +74,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
     { isLoading: deleteLoading, isSuccess: deleteSuccess, error: deleteError },
   ] = useDeleteReviewsMutation();
 
-  const { data: reviewsData } = useGetMeReviewsQuery();
+  const { data: reviewsData } = useGetMeReviewsQuery(id);
 
   // Type guard for reviews data
   const reviews: Review[] = reviewsData?.data ?? [];

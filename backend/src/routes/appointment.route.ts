@@ -20,7 +20,7 @@ appointmentRouter.get("/users", isAuthenticatedUser, getUserAppointments);
 appointmentRouter.put("/:appointmentId/cancel", isAuthenticatedUser, cancelAppointment);
 
 // Doktor randevu işlemleri
-appointmentRouter.get("/doctor/:doctorId", getDoctorAppointments);
-appointmentRouter.put("/:appointmentId/confirm", confirmAppointment);
+appointmentRouter.get("/doctor/:id", getDoctorAppointments);
+appointmentRouter.put("/:id/confirm", confirmAppointment);
 
 export default appointmentRouter;

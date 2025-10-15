@@ -149,9 +149,9 @@ const getDoctorAppointments = async (
   next: NextFunction
 ) => {
   try {
-    const { doctorId } = req.params;
+    const { id } = req.params;
 
-    const appointments = await Appointment.find({ doctor: doctorId })
+    const appointments = await Appointment.find({ doctor: id })
       .populate("user", "name email phone")
       .populate("doctor", "name speciality")
       .sort({ date: 1 });
@@ -214,10 +214,10 @@ const confirmAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { appointmentId } = req.params;
+    const { id } = req.params;
 
     const appointment = await Appointment.findByIdAndUpdate(
-      appointmentId,
+      id,
       { status: "confirmed" },
       { new: true }
     )

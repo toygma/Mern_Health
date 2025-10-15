@@ -6,7 +6,7 @@ import { upload_file } from "../utils/cloudinary";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, role, address } = req.body;
+    const { name, email, password, role, address, workingHours } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -51,6 +51,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         password,
         address: finalAddress,
         role: "doctor",
+        workingHours,
       });
     } else {
       return res.status(400).json({

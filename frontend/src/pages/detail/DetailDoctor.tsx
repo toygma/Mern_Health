@@ -240,25 +240,25 @@ const DetailDoctor = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-blue-50 rounded-xl">
                     <p className="text-3xl font-bold text-blue-600">
-                      {doctor.doctor.patients || "500"}+
+                      {doctor?.doctor?.patients || "500"}+
                     </p>
                     <p className="text-sm text-gray-600 mt-1">Patients</p>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-xl">
                     <p className="text-3xl font-bold text-green-600">
-                      {doctor.doctor.experience.slice(0, 2) || "10"}+
+                      {doctor?.doctor?.experience?.slice(0, 2) || "10"}+
                     </p>
                     <p className="text-sm text-gray-600 mt-1">Years Exp</p>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-xl">
                     <p className="text-3xl font-bold text-purple-600">
-                      {doctor.doctor.awards.length || "15"}+
+                      {doctor?.doctor?.awards?.length || "15"}+
                     </p>
                     <p className="text-sm text-gray-600 mt-1">Awards</p>
                   </div>
                   <div className="text-center p-4 bg-yellow-50 rounded-xl">
                     <p className="text-3xl font-bold text-yellow-600">
-                      {doctor.doctor.totalRating || "4.8"}
+                      {doctor?.doctor?.totalRating || "4.8"}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">Rating</p>
                   </div>

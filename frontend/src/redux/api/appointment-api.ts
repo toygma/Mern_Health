@@ -31,6 +31,19 @@ export const appointmentApi = createApi({
       query: () => "/users",
       providesTags: ["Appointment"],
     }),
+    getDoctorAppointment: builder.query<any, any>({
+      query: (id) => `/doctor/${id}`,
+      providesTags: ["Appointment"],
+    }),
+    confirmAppointment: builder.mutation<any, any>({
+      query: ({id}) => {
+        return {
+          url: `/${id}/confirm`,
+          method: "PUT",
+        };
+      },
+      invalidatesTags: ["Appointment"],
+    }),
   }),
 });
 
@@ -38,4 +51,6 @@ export const {
   useCreateAppointmentMutation,
   useGetMeAppointmentQuery,
   useDeleteAppointmentMutation,
+  useGetDoctorAppointmentQuery,
+  useConfirmAppointmentMutation,
 } = appointmentApi;
