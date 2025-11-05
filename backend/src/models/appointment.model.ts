@@ -49,16 +49,19 @@ appointmentSchema.pre("save", async function (next) {
   if (this.status === "cancelled") {
     return next();
   }
+
   const existingAppointment = await mongoose.models.Appointment.findOne({
     doctor: this.doctor,
     date: this.date,
     timeSlot: this.timeSlot,
     status: { $in: ["pending", "confirmed"] },
+    _id: { $ne: this._id },
   });
 
   if (existingAppointment) {
     throw new Error("This time slot is already booked.");
   }
+
   next();
 });
 

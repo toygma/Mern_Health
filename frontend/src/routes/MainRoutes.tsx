@@ -48,7 +48,7 @@ export const MainRoutes = {
             </Suspense>
           ),
         },
-         {
+        {
           path: "/my-profile",
           element: (
             <Suspense fallback={<Loading />}>
@@ -56,7 +56,7 @@ export const MainRoutes = {
             </Suspense>
           ),
         },
-          {
+        {
           path: "/my-appointment",
           element: (
             <Suspense fallback={<Loading />}>

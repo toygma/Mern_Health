@@ -43,6 +43,7 @@ export interface IDoctor extends Document {
   totalRating: number;
   averageRating: number;
   appointments: IAppointment[];
+  paid: "paid" | "no paid";
 
   appointmentDurationMinutes: number;
   workingHours: IWorkingHours[];
@@ -87,6 +88,11 @@ const doctorSchema = new Schema<IDoctor>(
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     experience: { type: String },
     about: { type: String },
+    paid: {
+      type: String,
+      enum: ["paid", "no paid"],
+      default: "no paid",
+    },
     education: [
       {
         degree: { type: String },

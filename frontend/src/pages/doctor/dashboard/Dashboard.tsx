@@ -88,7 +88,6 @@ const DoctorPanel: React.FC = () => {
           new Date(a.date).getTime() - new Date(b.date).getTime()
       );
   }, [appointmentsData, filterStatus, searchTerm]);
-  console.log("🚀 ~ DoctorPanel ~ filteredAppointments:", filteredAppointments)
 
   // Durum badge'i
   const getStatusBadge = (status: IAppointment["status"]): any => {

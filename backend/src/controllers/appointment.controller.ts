@@ -3,111 +3,91 @@ import Appointment from "../models/appointment.model";
 import Doctor from "../models/doctor.model";
 import moment from "moment";
 
-const createAppointment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+// Girdi için interface (TypeScript için)
+interface CreateAppointmentBody {
+  doctorId: string;
+  date: string;
+  timeSlot: string;
+  reason: string;
+}
+
+const createAppointment = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { doctorId, date, timeSlot, reason } = req.body;
+    const { doctorId, date, timeSlot, reason } = req.body as CreateAppointmentBody;
     const userId = req.user?._id;
 
+    // -------------------------
+    // VALIDATION
+    // -------------------------
     if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "You must be logged in to book an appointment",
-      });
+      return res.status(401).json({ success: false, message: "You must be logged in" });
     }
-
     if (!doctorId || !date || !timeSlot || !reason) {
-      return res.status(400).json({
-        success: false,
-        message: "Doctor, date, timeSlot and reason are required",
-      });
+      return res.status(400).json({ success: false, message: "Doctor, date, timeSlot, reason are required" });
     }
 
-    const appointmentDate = new Date(date);
-    if (appointmentDate < new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot book appointment for past dates",
-      });
+    // Convert date + timeSlot to actual Date object
+    const [hoursStr, minutesStr, meridiem] = timeSlot.match(/(\d+):(\d+)\s?(AM|PM)/i)!.slice(1);
+    let hours = parseInt(hoursStr);
+    const minutes = parseInt(minutesStr);
+    if (meridiem.toUpperCase() === "PM" && hours !== 12) hours += 12;
+    if (meridiem.toUpperCase() === "AM" && hours === 12) hours = 0;
+
+    const [month, day, year] = date.split("/").map(Number); // assuming MM/DD/YYYY
+    const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
+
+    if (appointmentDateTime < new Date()) {
+      return res.status(400).json({ success: false, message: "Cannot book appointment for past dates" });
     }
 
-    // Doktor var mı kontrol et
+    // -------------------------
+    // CHECK DOCTOR
+    // -------------------------
     const doctor = await Doctor.findById(doctorId);
-    if (!doctor) {
-      return res.status(404).json({
-        success: false,
-        message: "Doctor not found",
-      });
-    }
+    if (!doctor) return res.status(404).json({ success: false, message: "Doctor not found" });
 
-    // Aynı doktor ve kullanıcı için aynı gün birden fazla randevu engelle
-    const existingAppointment = await Appointment.findOne({
+    // -------------------------
+    // CHECK EXISTING APPOINTMENT
+    // -------------------------
+    const existing = await Appointment.findOne({
       user: userId,
       doctor: doctorId,
       date: {
-        $gte: new Date(appointmentDate),
-        $lt: new Date(appointmentDate.getTime() + 24 * 60 * 60 * 1000),
+        $gte: new Date(year, month - 1, day),
+        $lt: new Date(year, month - 1, day + 1),
       },
       status: { $in: ["pending", "confirmed"] },
     });
+    if (existing) return res.status(409).json({ success: false, message: "You already have an appointment with this doctor on this date" });
 
-    if (existingAppointment) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "You already have an appointment with this doctor on this date",
-      });
-    }
-
-    const appointment = new Appointment({
+    // -------------------------
+    // CREATE APPOINTMENT
+    // -------------------------
+    const appointment = await Appointment.create({
       user: userId,
       doctor: doctorId,
-      date: appointmentDate,
+      date: appointmentDateTime,
       timeSlot,
       reason,
     });
 
-    const savedAppointment = await appointment.save();
+    // -------------------------
+    // UPDATE DOCTOR APPOINTMENTS
+    // -------------------------
+    doctor.appointments.push(appointment._id);
+    await doctor.save();
 
-    // ONEMLI: await kullan ve hata kontrolu yap
-    const updatedDoctor = await Doctor.findByIdAndUpdate(
-      doctorId,
-      { $push: { appointments: savedAppointment._id } },
-      { new: true }
-    );
-
-    if (!updatedDoctor) {
-      // Eger doktor update edilemezse, appointment'i sil
-      await Appointment.findByIdAndDelete(savedAppointment._id);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to update doctor appointments",
-      });
-    }
-
-    const populatedAppointment = await Appointment.findById(
-      savedAppointment._id
-    )
+    // -------------------------
+    // POPULATE AND RETURN
+    // -------------------------
+    const populated = await Appointment.findById(appointment._id)
       .populate("user", "name email phone")
       .populate("doctor", "name speciality fee");
 
-    res.status(201).json({
-      success: true,
-      message: "Appointment booked successfully",
-      data: populatedAppointment,
-    });
-  } catch (error: any) {
-    console.error("Create Appointment Error:", error);
-    if (error.message.includes("already booked")) {
-      return res.status(409).json({
-        success: false,
-        message: error.message,
-      });
-    }
-    next(error);
+    res.status(201).json({ success: true, message: "Appointment booked successfully", data: populated });
+  } catch (err) {
+    console.error("Create Appointment Error:", err);
+    next(err);
   }
 };
 
@@ -245,63 +225,64 @@ const confirmAppointment = async (
 const getAvailableSlots = async (req: Request, res: Response) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query; // date = "2025-10-29"
+    const dateString = req.query.date as string;
 
-    if (!date || typeof date !== "string") {
-      return res.status(400).json({ message: "Tarih bilgisi gerekli." });
+    if (!dateString) {
+      return res.status(400).json({ message: "Date is required." });
     }
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) {
-      return res.status(404).json({ message: "Doktor bulunamadı." });
+      return res.status(404).json({ message: "Doctor not found." });
     }
 
-    const requestedDate = moment(date);
+    const requestedDate = moment(dateString, "YYYY-MM-DD");
     const dayOfWeek = requestedDate.day();
 
-    const scheduleForDay = doctor.workingHours.find(
-      (d) => d.dayOfWeek === dayOfWeek
-    );
+    const schedule = doctor.workingHours.find((d) => d.dayOfWeek === dayOfWeek);
 
-    if (!scheduleForDay || !scheduleForDay.isWorking) {
+    if (!schedule?.isWorking) {
       return res.json({ availableSlots: [] });
     }
 
-    const startOfDay = requestedDate.clone().startOf("day");
-    const endOfDay = requestedDate.clone().endOf("day");
+    const startOfDay = requestedDate.clone().startOf("day").toDate();
+    const endOfDay = requestedDate.clone().endOf("day").toDate();
 
-    const existingAppointments = await Appointment.find({
-      doctor: doctorId,
-      date: {
-        $gte: startOfDay.toDate(),
-        $lte: endOfDay.toDate(),
+    const bookedAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor: doctorId,
+          date: { $gte: startOfDay, $lte: endOfDay },
+        },
       },
-    });
+      {
+        $project: {
+          _id: 0,
+          time: { $dateToString: { format: "%H:%M", date: "$date" } },
+        },
+      },
+    ]);
 
-    const bookedSlots = existingAppointments.map((app) =>
-      moment(app.date).format("HH:mm")
-    );
+    const bookedSlots = bookedAppointments.map((a) => a.time);
 
-    const allSlots = [];
-    const startTime = moment(scheduleForDay.startTime, "HH:mm");
-    const endTime = moment(scheduleForDay.endTime, "HH:mm");
+    // Tüm olası saatleri oluştur
+    const slots: string[] = [];
+    let currentSlot = moment(schedule.startTime, "HH:mm");
+    const endTime = moment(schedule.endTime, "HH:mm");
     const duration = doctor.appointmentDurationMinutes;
 
-    let currentSlot = startTime;
-
     while (currentSlot.isBefore(endTime)) {
-      allSlots.push(currentSlot.format("HH:mm"));
+      const slotTime = currentSlot.format("HH:mm");
+      if (!bookedSlots.includes(slotTime)) {
+        slots.push(slotTime);
+      }
       currentSlot.add(duration, "minutes");
     }
 
-    const availableSlots = allSlots.filter(
-      (slot) => !bookedSlots.includes(slot)
-    );
-
-    res.json({ availableSlots });
+    res.json({ availableSlots: slots });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Sunucu hatası oluştu." });
+    res.status(500).json({ message: "Server error occurred." });
   }
 };
 

@@ -9,12 +9,22 @@ import userRoute from "./routes/user.route";
 import adminRouter from "./routes/admin.route";
 import reviewRouter from "./routes/review.route";
 import appointmentRouter from "./routes/appointment.route";
+import stripeRouter from "./routes/stripe.route";
+import { handleStripeWebhook } from "./controllers/webhook.controller";
 
 const app: Express = express();
 
 //path deploy
 import path from "path";
 const __dirname = path.resolve();
+
+//webhooks
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+
 // Middleware
 app.use(requestLogger);
 app.use(express.json({ limit: "50mb" }));
@@ -24,8 +34,6 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -34,6 +42,7 @@ app.use("/api/v1/auth", userRoute);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/appointment", appointmentRouter);
+app.use("/api/v1/payment", stripeRouter);
 
 // Error Handler (must be last)
 app.use(errorHandler);

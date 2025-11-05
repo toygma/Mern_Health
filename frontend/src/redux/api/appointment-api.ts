@@ -44,6 +44,7 @@ export const appointmentApi = createApi({
       },
       invalidatesTags: ["Appointment"],
     }),
+    
   }),
 });
 
