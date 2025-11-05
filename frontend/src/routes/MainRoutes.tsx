@@ -16,6 +16,7 @@ const Login = lazy(() => import("../pages/auth/login/Login"));
 const MyProfile = lazy(() => import("../pages/myProfile/MyProfile"));
 const SuccessPage = lazy(() => import("../pages/myAppointments/_components/SuccessPage"));
 const MyAppointments = lazy(() => import("../pages/myAppointments/MyAppointments"));
+const CancelPage = lazy(() => import("../pages/myAppointments/_components/CancelPage"));
 
 export const MainRoutes = {
   path: "/",
@@ -75,6 +76,14 @@ export const MainRoutes = {
           element: (
             <Suspense fallback={<Loading />}>
               <SuccessPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/appointments/cancel",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <CancelPage />
             </Suspense>
           ),
         },
