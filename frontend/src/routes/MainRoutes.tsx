@@ -4,8 +4,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/NotFound";
 import Loading from "../components/Loading";
-import { GuestRoute, ProtectedRoute } from "./protected-route";
-import MyAppointments from "../pages/myAppointments/MyAppointments";
+import { GuestRoute, ProtectedPaid, ProtectedRoute } from "./protected-route";
 
 //suspense
 
@@ -15,6 +14,8 @@ const DetailDoctor = lazy(() => import("../pages/detail/DetailDoctor"));
 const SignUp = lazy(() => import("../pages/auth/signup/SignUp"));
 const Login = lazy(() => import("../pages/auth/login/Login"));
 const MyProfile = lazy(() => import("../pages/myProfile/MyProfile"));
+const SuccessPage = lazy(() => import("../pages/myAppointments/_components/SuccessPage"));
+const MyAppointments = lazy(() => import("../pages/myAppointments/MyAppointments"));
 
 export const MainRoutes = {
   path: "/",
@@ -61,6 +62,19 @@ export const MainRoutes = {
           element: (
             <Suspense fallback={<Loading />}>
               <MyAppointments />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+    {
+      element: <ProtectedPaid />,
+      children: [
+        {
+          path: "/appointments/success",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <SuccessPage />
             </Suspense>
           ),
         },

@@ -58,3 +58,18 @@ export const ProtectedDoctor = () => {
 
   return <Outlet />;
 };
+
+
+export const ProtectedPaid = () => {
+  const { user, loading } = useAppSelector((state) => state.auth);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!user || user.paid !== "paid") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};

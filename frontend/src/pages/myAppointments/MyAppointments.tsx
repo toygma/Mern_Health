@@ -7,6 +7,7 @@ import moment from "moment";
 import toast from "react-hot-toast";
 import { useCreateCheckoutMutation } from "../../redux/api/checkout-api";
 import { useState } from "react";
+import { useAppSelector } from "../../redux/hook";
 
 // Type definitions
 interface Doctor {
@@ -28,29 +29,31 @@ const MyAppointments = () => {
   const { data, isLoading: isLoadingAppointments } = useGetMeAppointmentQuery();
   const [createCheckout] = useCreateCheckoutMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
+  const { user } = useAppSelector((state) => state.auth);
+  console.log("🚀 ~ MyAppointments ~ user:", user);
 
   const [loadingCheckoutId, setLoadingCheckoutId] = useState<string | null>(
     null
   );
   const [loadingCancelId, setLoadingCancelId] = useState<string | null>(null);
 
-const handleCheckout = async (doctorId: string, appointmentId: string) => {
-  setLoadingCheckoutId(appointmentId);
-  try {
-    const res = await createCheckout({ doctorId, appointmentId }).unwrap();
+  const handleCheckout = async (doctorId: string, appointmentId: string) => {
+    setLoadingCheckoutId(appointmentId);
+    try {
+      const res = await createCheckout({ doctorId, appointmentId }).unwrap();
 
-    if (res?.sessionUrl) {
-      window.location.href = res.sessionUrl;
-    } else {
-      toast.error("Failed to get Stripe checkout URL");
+      if (res?.sessionUrl) {
+        window.location.href = res.sessionUrl;
+      } else {
+        toast.error("Failed to get Stripe checkout URL");
+      }
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Checkout failed!");
+      console.error("Checkout error:", err);
+    } finally {
+      setLoadingCheckoutId(null);
     }
-  } catch (err: any) {
-    toast.error(err?.data?.message || "Checkout failed!");
-    console.error("Checkout error:", err);
-  } finally {
-    setLoadingCheckoutId(null);
-  }
-};
+  };
 
   const handleCancel = async (appointmentId: string) => {
     setLoadingCancelId(appointmentId);
@@ -65,7 +68,6 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
     }
   };
 
-
   if (isLoadingAppointments) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -77,10 +79,12 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
   }
 
   return (
-     <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">My Appointments</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+            My Appointments
+          </h2>
           <p className="text-gray-500 text-lg">
             Manage your upcoming medical appointments
           </p>
@@ -132,8 +136,12 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
                             <div className="flex items-start gap-3">
                               <MapPin className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                               <div>
-                                <p className="text-sm text-gray-500 mb-0.5">Address</p>
-                                <p className="text-gray-800">{item.doctor.address.city}</p>
+                                <p className="text-sm text-gray-500 mb-0.5">
+                                  Address
+                                </p>
+                                <p className="text-gray-800">
+                                  {item.doctor.address.city}
+                                </p>
                               </div>
                             </div>
                           )}
@@ -141,9 +149,12 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
                           <div className="flex items-start gap-3">
                             <Clock className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm text-gray-500 mb-0.5">Date & Time</p>
+                              <p className="text-sm text-gray-500 mb-0.5">
+                                Date & Time
+                              </p>
                               <p className="text-gray-800 font-semibold">
-                                {moment(item.date).format("LL")} - {item.timeSlot}
+                                {moment(item.date).format("LL")} -{" "}
+                                {item.timeSlot}
                               </p>
                             </div>
                           </div>
@@ -156,29 +167,37 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
                           onClick={() =>
                             handleCheckout(item.doctor._id, item._id)
                           }
-                          disabled={isCheckoutLoading}
+                          disabled={isCheckoutLoading || user?.paid === "paid"}
                           className={`flex-1 ${
                             isCheckoutLoading
                               ? "bg-blue-300 cursor-not-allowed"
+                              : user?.paid === "paid"
+                              ? "bg-gray-400"
                               : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                           } text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg`}
                         >
                           <CreditCard className="w-5 h-5" />
-                          {isCheckoutLoading ? "Processing..." : "Pay Online"}
+                          {isCheckoutLoading
+                            ? "Processing..."
+                            : user?.paid === "paid"
+                            ? "payment has been made."
+                            : "Pay Online"}
                         </button>
 
-                        <button
-                          onClick={() => handleCancel(item._id)}
-                          disabled={isCancelLoading}
-                          className={`flex-1 ${
-                            isCancelLoading
-                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                              : "bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 border border-gray-200 hover:border-red-200"
-                          } font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2`}
-                        >
-                          <X className="w-5 h-5" />
-                          {isCancelLoading ? "Cancelling..." : "Cancel"}
-                        </button>
+                        {user?.paid !== "paid" && (
+                          <button
+                            onClick={() => handleCancel(item._id)}
+                            disabled={isCancelLoading}
+                            className={`flex-1 ${
+                              isCancelLoading
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 border border-gray-200 hover:border-red-200"
+                            } font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2`}
+                          >
+                            <X className="w-5 h-5" />
+                            {isCancelLoading ? "Cancelling..." : "Cancel"}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -187,7 +206,9 @@ const handleCheckout = async (doctorId: string, appointmentId: string) => {
             })
           ) : (
             <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
-              <p className="text-gray-500 text-lg mb-2">No appointments found</p>
+              <p className="text-gray-500 text-lg mb-2">
+                No appointments found
+              </p>
               <p className="text-gray-400">
                 Book your first appointment to get started
               </p>

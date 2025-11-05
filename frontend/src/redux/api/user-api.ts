@@ -4,7 +4,7 @@ import {
   setLoading,
   setUser,
 } from "../features/user-slice";
-import type { IUser } from "../../types/auth";
+import type { IUser } from "../../types/types";
 
 export const userApi = createApi({
   reducerPath: "userApi",
