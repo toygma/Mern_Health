@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import {  useState } from "react";
 import { Circle, User } from "lucide-react";
 import { Link } from "react-router";
 import Loading from "../../components/Loading";
@@ -21,28 +21,18 @@ const categories = [
 ];
 
 const AllDoctors = () => {
-  const [isPending, startTransition] = useTransition();
   const { data: doctors, isLoading } = useGetAllDoctorsQuery();
-
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [filterDoctor, setFilterDoctor] = useState<Doctor[]>([]);
 
-  useEffect(() => {
-    if (!doctors?.data) return;
+ const filterDoctor = doctors?.data 
+  ? selectedCategory === "all"
+    ? doctors.data
+    : doctors.data.filter((doc:Doctor) => 
+        doc?.speciality?.toLowerCase() === selectedCategory.toLowerCase()
+      )
+  : [];
 
-    startTransition(() => {
-      const filteredDoctors =
-        selectedCategory === "all"
-          ? doctors.data
-          : doctors.data.filter(
-              (doc: any) =>
-                doc?.speciality?.toLowerCase() === selectedCategory.toLowerCase()
-            );
-      setFilterDoctor(filteredDoctors);
-    });
-  }, [selectedCategory, doctors]);
-
-  if (isLoading || isPending) {
+  if (isLoading) {
     return <Loading />;
   }
 
@@ -51,7 +41,7 @@ const AllDoctors = () => {
       <div className="flex flex-col md:flex-row md:gap-8 lg:gap-12">
         {/* Sidebar - Categories */}
         <aside className="w-full md:w-72 lg:w-80 md:flex-shrink-0 mb-8 md:mb-0">
-          <div className="bg-white shadow-xl rounded-2xl p-4 sm:p-6 h-full">
+          <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 h-full">
             <div className="mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                 Specializations
@@ -66,10 +56,10 @@ const AllDoctors = () => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`w-[250px] h-full flex-shrink-0 md:w-full text-left px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-all duration-300 flex items-center gap-3 text-sm sm:text-base cursor-pointer ${
+                  className={`w-[250px] h-full flex-shrink-0 md:w-full text-left px-3 sm:px-4 py-2 sm:py-3 rounded-xl transition-colors duration-200 flex items-center gap-3 text-sm sm:text-base cursor-pointer ${
                     selectedCategory === cat.id
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform md:scale-105"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:transform md:hover:scale-102"
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
+                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <span className="text-xl sm:text-2xl">{cat.icon}</span>
@@ -95,18 +85,20 @@ const AllDoctors = () => {
 
           {/* Doctor Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filterDoctor.map((doctor) => (
+            {filterDoctor.map((doctor:Doctor) => (
               <Link
                 to={`/doctor/${generateSlugify(doctor.name)}/${doctor._id}`}
                 key={doctor._id}
                 className="group block"
               >
-                <div className="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-300 overflow-hidden group-hover:transform group-hover:scale-105 h-full flex flex-col">
+                <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full flex flex-col">
                   <div className="relative">
                     <img
                       src={doctor?.images[0]?.url}
                       alt={doctor.name}
                       className="w-full h-52 object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div
                       className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${
@@ -133,9 +125,9 @@ const AllDoctors = () => {
                     </p>
 
                     <div
-                      className={`w-full mt-auto text-center py-2.5 px-4 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base ${
+                      className={`w-full mt-auto text-center py-2.5 px-4 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base ${
                         doctor.available
-                          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white group-hover:shadow-lg"
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white group-hover:from-blue-600 group-hover:to-indigo-700"
                           : "bg-gray-200 text-gray-500 cursor-not-allowed"
                       }`}
                     >
