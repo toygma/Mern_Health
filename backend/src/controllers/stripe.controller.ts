@@ -44,7 +44,7 @@ const getCheckoutSession = async (req: Request, res: Response) => {
             currency: "try",
             unit_amount: Math.round(Number(doctor.fee) * 100),
             product_data: {
-              name: `Appointment with Dr. ${doctor.name}`,
+              name: `Appointment with  ${doctor.name}`,
               description: doctor.about || "",
               images: doctor.images?.length ? [doctor.images[0].url] : [],
             },

@@ -7,6 +7,8 @@ export interface IAppointment extends Document {
   date: Date;
   timeSlot: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
+  isPaid: "unpaid" | "paid" | "refunded";
+  paymentId?: string;
   reason: string;
   createdAt: Date;
   updatedAt: Date;
@@ -37,6 +39,14 @@ const appointmentSchema = new Schema<IAppointment>(
       enum: ["pending", "confirmed", "cancelled", "completed"],
       default: "pending",
     },
+    isPaid: {  // ✅ DÜZELTİLDİ: isPiad → isPaid
+      type: String,
+      enum: ["unpaid", "paid", "refunded"],
+      default: "unpaid",
+    },
+    paymentId: {
+      type: String,
+    },
     reason: {
       type: String,
       required: true,
@@ -50,7 +60,7 @@ appointmentSchema.pre("save", async function (next) {
     return next();
   }
 
-  const existingAppointment = await mongoose.models.Appointment.findOne({
+  const existingAppointment = await Appointment.findOne({
     doctor: this.doctor,
     date: this.date,
     timeSlot: this.timeSlot,
@@ -66,17 +76,15 @@ appointmentSchema.pre("save", async function (next) {
 });
 
 appointmentSchema.post("save", async function () {
-  await mongoose
-    .model("Doctor")
-    .findByIdAndUpdate(
-      this.doctor,
-      { $push: { appointments: this._id } },
-      { new: true }
-    );
+  const Doctor = mongoose.model("Doctor");
+  await Doctor.findByIdAndUpdate(
+    this.doctor,
+    { $addToSet: { appointments: this._id } }, 
+    { new: true }
+  );
 });
 
-const Appointment =
-  mongoose.models.Appointment ||
+const Appointment = mongoose.models.Appointment || 
   mongoose.model<IAppointment>("Appointment", appointmentSchema);
 
 export default Appointment;

@@ -7,7 +7,6 @@ import moment from "moment";
 import toast from "react-hot-toast";
 import { useCreateCheckoutMutation } from "../../redux/api/checkout-api";
 import { useState } from "react";
-import { useAppSelector } from "../../redux/hook";
 
 // Type definitions
 interface Doctor {
@@ -23,18 +22,18 @@ interface Appointment {
   doctor: Doctor;
   date: string;
   timeSlot: string;
+  status: string;
+  reason?: string;
+  isPaid?: 'unpaid' | 'paid' | 'refunded';  
+  paymentId?: string;
 }
 
 const MyAppointments = () => {
   const { data, isLoading: isLoadingAppointments } = useGetMeAppointmentQuery();
   const [createCheckout] = useCreateCheckoutMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
-  const { user } = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ MyAppointments ~ user:", user);
 
-  const [loadingCheckoutId, setLoadingCheckoutId] = useState<string | null>(
-    null
-  );
+  const [loadingCheckoutId, setLoadingCheckoutId] = useState<string | null>(null);
   const [loadingCancelId, setLoadingCancelId] = useState<string | null>(null);
 
   const handleCheckout = async (doctorId: string, appointmentId: string) => {
@@ -95,11 +94,13 @@ const MyAppointments = () => {
             data.data.map((item: Appointment) => {
               const isCheckoutLoading = loadingCheckoutId === item._id;
               const isCancelLoading = loadingCancelId === item._id;
+              
+              const isPaid = item.isPaid === 'paid';
 
               return (
                 <div
                   key={item._id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+                  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-100"
                 >
                   <div className="flex flex-col md:flex-row">
                     {/* Doctor Image */}
@@ -109,6 +110,7 @@ const MyAppointments = () => {
                           src={item.doctor.images[0].url}
                           alt={`Dr. ${item.doctor.name}`}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="w-32 h-32 bg-blue-200 rounded-full flex items-center justify-center">
@@ -123,9 +125,16 @@ const MyAppointments = () => {
                     <div className="flex-1 p-8 flex flex-col justify-between">
                       <div className="space-y-4">
                         <div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                            Dr. {item.doctor.name}
-                          </h3>
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-2xl font-bold text-gray-900">
+                            {item.doctor.name}
+                            </h3>
+                            {isPaid && (
+                              <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                                ✓ Paid
+                              </span>
+                            )}
+                          </div>
                           <p className="text-blue-600 font-semibold text-lg">
                             {item.doctor.speciality}
                           </p>
@@ -167,24 +176,24 @@ const MyAppointments = () => {
                           onClick={() =>
                             handleCheckout(item.doctor._id, item._id)
                           }
-                          disabled={isCheckoutLoading || user?.paid === "paid"}
+                          disabled={isCheckoutLoading || isPaid}
                           className={`flex-1 ${
                             isCheckoutLoading
                               ? "bg-blue-300 cursor-not-allowed"
-                              : user?.paid === "paid"
-                              ? "bg-gray-400"
+                              : isPaid
+                              ? "bg-green-500 cursor-default"
                               : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                          } text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg`}
+                          } text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 shadow-md`}
                         >
                           <CreditCard className="w-5 h-5" />
                           {isCheckoutLoading
                             ? "Processing..."
-                            : user?.paid === "paid"
-                            ? "payment has been made."
+                            : isPaid
+                            ? "Payment Completed"
                             : "Pay Online"}
                         </button>
 
-                        {user?.paid !== "paid" && (
+                        {!isPaid && (
                           <button
                             onClick={() => handleCancel(item._id)}
                             disabled={isCancelLoading}
@@ -192,7 +201,7 @@ const MyAppointments = () => {
                               isCancelLoading
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                 : "bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 border border-gray-200 hover:border-red-200"
-                            } font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2`}
+                            } font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2`}
                           >
                             <X className="w-5 h-5" />
                             {isCancelLoading ? "Cancelling..." : "Cancel"}
@@ -205,7 +214,7 @@ const MyAppointments = () => {
               );
             })
           ) : (
-            <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
+            <div className="text-center py-16 bg-white rounded-2xl shadow-md">
               <p className="text-gray-500 text-lg mb-2">
                 No appointments found
               </p>

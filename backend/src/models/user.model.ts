@@ -16,7 +16,6 @@ export interface IUser extends Document {
   phone: string;
   dob: string;
   image: IImage;
-  paid: "paid" | "no paid";
   createdAt?: Date;
   updatedAt?: Date;
   role: "patient" | "admin" | "doctor";
@@ -44,11 +43,7 @@ const userSchema = new Schema<IUser>(
       enum: ["patient", "admin", "doctor"],
       default: "patient",
     },
-    paid:{
-      type:String,
-      enum:["paid","no paid"],
-      default:"no paid"
-    },
+   
     image: {
       public_id: { type: String },
       url: { type: String },

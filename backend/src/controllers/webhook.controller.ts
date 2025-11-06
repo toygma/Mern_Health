@@ -8,9 +8,6 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export const handleStripeWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string;
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  console.log("Headers:", req.headers);
-  console.log("Body raw:", req.body.toString());
-  console.log("stripe-signature:", req.headers["stripe-signature"]);
 
   if (!endpointSecret) {
     return res.status(500).json("Stripe webhook secret not set");
@@ -44,17 +41,10 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
       }
 
       appointment.status = "confirmed";
+      appointment.paid = "paid";
+      appointment.paymentId = session.payment_intent as string; 
+      appointment.paidAt = new Date(); 
       await appointment.save();
-
-      if (appointment.user) {
-        appointment.user.paid = "paid";
-        await appointment.user.save();
-      }
-
-      if (appointment.doctor) {
-        appointment.doctor.paid = "paid";
-        await appointment.doctor.save();
-      }
 
       console.log(
         `Appointment ${appointmentId} and related user/doctor marked as paid.`

@@ -2,19 +2,29 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Doctor from "../models/doctor.model";
 import { Doctors } from "../data/doctorsData";
+
 dotenv.config();
-const SeederProduct = async () => {
+
+const SeederDoctor = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI!);
+    console.log("✅ Database connected!");
 
-    // await productModel.deleteMany();
-    // console.log("Products Are Deleted !");
+    await Doctor.deleteMany();
+    console.log("🗑️  Old doctors deleted!");
 
     await Doctor.insertMany(Doctors);
-    console.log("Products Are Added !");
+    console.log("✅ New doctors added!");
+    console.log(`📊 Total: ${Doctors.length} doctors`);
+
+    // Bağlantıyı kapat
+    await mongoose.connection.close();
+    console.log("🔌 Database connection closed!");
+    process.exit(0);
   } catch (error) {
-    console.log(error);
+    console.error("❌ Error:", error);
+    process.exit(1);
   }
 };
 
-SeederProduct();
+SeederDoctor();

@@ -52,6 +52,8 @@ export const Doctors = [
     password: "password123",
     speciality: "Dermatologist",
     available: true,
+  
+    
     images: [
       {
         public_id: "doctor2_k2k7hs",
@@ -92,6 +94,8 @@ export const Doctors = [
     password: "password123",
     speciality: "Pediatrician",
     available: true,
+  
+    
     images: [
       {
         public_id: "bruno-rodrigues-279xIHymPYY-unsplash_aq1b5x",
@@ -135,6 +139,8 @@ export const Doctors = [
     email: "daniel.brain@example.com",
     password: "password123",
     speciality: "Neurologist",
+  
+    
     available: true,
     images: [
       {
@@ -175,6 +181,8 @@ export const Doctors = [
     email: "ethan.bone@example.com",
     password: "password123",
     speciality: "Orthopedic Surgeon",
+  
+    
     available: true,
     images: [
       {
@@ -213,6 +221,8 @@ export const Doctors = [
     email: "fiona.eye@example.com",
     password: "password123",
     speciality: "Ophthalmologist",
+  
+    
     available: true,
     images: [
       {
@@ -253,6 +263,8 @@ export const Doctors = [
     email: "george.mind@example.com",
     password: "password123",
     speciality: "Psychiatrist",
+  
+    
     available: true,
     images: [
       {
@@ -291,6 +303,8 @@ export const Doctors = [
     email: "hannah.sugar@example.com",
     password: "password123",
     speciality: "Endocrinologist",
+  
+    
     available: true,
     images: [
       {
@@ -331,6 +345,8 @@ export const Doctors = [
     email: "ian.gut@example.com",
     password: "password123",
     speciality: "Gastroenterologist",
+  
+    
     available: true,
     images: [
       {
@@ -375,8 +391,10 @@ export const Doctors = [
     email: "julia.tooth@example.com",
     password: "password123",
     speciality: "Dentist",
+  
+    
     available: true,
-     images: [
+    images: [
       {
         public_id: "doctor5_l0f4xv",
         url: "https://res.cloudinary.com/doznmpjdf/image/upload/v1760450022/doctor5_l0f4xv.jpg",
