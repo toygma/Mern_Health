@@ -44,7 +44,6 @@ const FormInput = ({
             className
           )}
           {...register(name)}
-          autoComplete="off"
         />
         {type === "password" && (
           <button

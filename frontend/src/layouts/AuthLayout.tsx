@@ -27,7 +27,7 @@ const AuthLayout = () => {
 
       <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between min-h-screen p-8 gap-12">
         {/* Sol Taraf - Form Bölümü */}
-        <div className="w-full lg:flex-1 z-10">
+        <div className="w-full  z-10">
           <div className={`${startWith ? "mt-20":"bg-white rounded-3xl shadow-xl p-8 border border-gray-100 h-full"}`}>
             <Outlet />
           </div>

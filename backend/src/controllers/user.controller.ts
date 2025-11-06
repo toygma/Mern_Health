@@ -23,7 +23,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       workingHours,
     } = req.body as IDoctor;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields (name, email, password).",

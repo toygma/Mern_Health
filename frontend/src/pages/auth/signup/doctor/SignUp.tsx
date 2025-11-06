@@ -1,7 +1,7 @@
 // pages/DoctorSignUp.tsx
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -18,14 +18,13 @@ import ServicesAddressSection from "./_components/ServiceAddresSection";
 import WorkingHoursSection from "./_components/WorkingSection";
 import Button from "../../../../ui/Button";
 import { useRegisterMutation } from "../../../../redux/api/auth-api";
+import { ArrowLeft } from "lucide-react";
 
 const DoctorSignUp = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
- const [
-    registerMutation,
-    { error: registerError, isSuccess },
-  ] = useRegisterMutation();
+  const [registerMutation, { error: registerError, isSuccess }] =
+    useRegisterMutation();
   const {
     register,
     handleSubmit,
@@ -64,7 +63,7 @@ const DoctorSignUp = () => {
     },
   });
 
- useEffect(() => {
+  useEffect(() => {
     if (isSuccess) {
       toast.success("Register successful");
       reset();
@@ -82,12 +81,12 @@ const DoctorSignUp = () => {
     }
   };
 
-const steps = [
-{ number: 1, title: "Basic Information" },
-{ number: 2, title: "Professional Information" },
-{ number: 3, title: "Education & Services" },
-{ number: 4, title: "Working Hours" },
-];
+  const steps = [
+    { number: 1, title: "Basic Information" },
+    { number: 2, title: "Professional Information" },
+    { number: 3, title: "Education & Services" },
+    { number: 4, title: "Working Hours" },
+  ];
   const nextStep = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
@@ -97,14 +96,20 @@ const steps = [
   };
 
   return (
-    <div className="min-h-screen  py-8 px-4">
+    <div className="min-h-screen  py-8 px-4 relative">
+      <Link
+        to={"/login"}
+        className="absolute -top-4 border border-gray-300 rounded-full p-2 cursor-pointer hover:bg-gray-200"
+      >
+        <ArrowLeft />
+      </Link>
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-8 text-white">
             <h1 className="text-3xl font-bold">Doctor Register</h1>
             <p className="mt-2 text-blue-100">
-             Create your professional account
+              Create your professional account
             </p>
           </div>
 
