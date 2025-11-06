@@ -9,6 +9,7 @@ export interface IAppointment extends Document {
   status: "pending" | "confirmed" | "cancelled" | "completed";
   isPaid: "unpaid" | "paid" | "refunded";
   paymentId?: string;
+  session?: string;
   reason: string;
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +46,9 @@ const appointmentSchema = new Schema<IAppointment>(
       default: "unpaid",
     },
     paymentId: {
+      type: String,
+    },
+     session: {           
       type: String,
     },
     reason: {

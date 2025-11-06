@@ -4,6 +4,8 @@ export const Doctors = [
     email: "alice.heart@example.com",
     password: "password123",
     speciality: "Cardiologist",
+    isPaid: "unpaid",
+    paymentId: "",
     available: true,
     images: [
       {
@@ -50,10 +52,10 @@ export const Doctors = [
     name: "Dr. Bella Skin",
     email: "bella.skin@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Dermatologist",
     available: true,
-  
-    
     images: [
       {
         public_id: "doctor2_k2k7hs",
@@ -92,10 +94,10 @@ export const Doctors = [
     name: "Dr. Charlie Kid",
     email: "charlie.kid@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Pediatrician",
     available: true,
-  
-    
     images: [
       {
         public_id: "bruno-rodrigues-279xIHymPYY-unsplash_aq1b5x",
@@ -138,9 +140,9 @@ export const Doctors = [
     name: "Dr. Daniel Brain",
     email: "daniel.brain@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Neurologist",
-  
-    
     available: true,
     images: [
       {
@@ -180,9 +182,9 @@ export const Doctors = [
     name: "Dr. Ethan Bone",
     email: "ethan.bone@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Orthopedic Surgeon",
-  
-    
     available: true,
     images: [
       {
@@ -220,9 +222,9 @@ export const Doctors = [
     name: "Dr. Fiona Eye",
     email: "fiona.eye@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Ophthalmologist",
-  
-    
     available: true,
     images: [
       {
@@ -262,9 +264,9 @@ export const Doctors = [
     name: "Dr. George Mind",
     email: "george.mind@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Psychiatrist",
-  
-    
     available: true,
     images: [
       {
@@ -302,9 +304,9 @@ export const Doctors = [
     name: "Dr. Hannah Sugar",
     email: "hannah.sugar@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Endocrinologist",
-  
-    
     available: true,
     images: [
       {
@@ -344,9 +346,9 @@ export const Doctors = [
     name: "Dr. Ian Gut",
     email: "ian.gut@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Gastroenterologist",
-  
-    
     available: true,
     images: [
       {
@@ -390,9 +392,9 @@ export const Doctors = [
     name: "Dr. Julia Tooth",
     email: "julia.tooth@example.com",
     password: "password123",
+    isPaid: "unpaid",
+    paymentId: "",
     speciality: "Dentist",
-  
-    
     available: true,
     images: [
       {

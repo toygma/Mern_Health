@@ -67,7 +67,7 @@ export const ProtectedPaid = () => {
     return <Loading />;
   }
 
-  if (!user || user.paid !== "paid") {
+  if (!user || user.isPaid !== "paid") {
     return <Navigate to="/" replace />;
   }
 

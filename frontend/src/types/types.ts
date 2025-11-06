@@ -2,17 +2,16 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
-  phone:string;
+  phone: string;
   image: [
     {
       public_id: string;
       url: string;
     }
   ];
-  paid:"paid" | "no paid";
+  isPaid: "unpaid" | "paid" | "refunded";
   role: "admin" | "doctor" | "patient";
 }
-
 
 export interface IAppointment {
   _id: string;
@@ -20,7 +19,7 @@ export interface IAppointment {
   date: string | Date;
   timeSlot: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
-  paid:"noPaid" | "paid";
+  isPaid: "unpaid" | "paid" | "refunded";
   reason: string;
   createdAt: string | Date;
   updatedAt: string | Date;
@@ -33,4 +32,9 @@ export interface IStats {
   completed: number;
 }
 
-export type FilterStatus = "all" | "pending" | "confirmed" | "cancelled" | "completed";
+export type FilterStatus =
+  | "all"
+  | "pending"
+  | "confirmed"
+  | "cancelled"
+  | "completed";

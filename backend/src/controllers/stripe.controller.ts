@@ -19,6 +19,7 @@ const getCheckoutSession = async (req: Request, res: Response) => {
     }
 
     const userId = req.user?._id;
+
     const doctor = await Doctor.findById(doctorId);
     const user = await User.findById(userId);
     const appointment = await Appointment.findById(appointmentId);
@@ -31,6 +32,7 @@ const getCheckoutSession = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
+    // Checkout session oluştur
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -38,13 +40,18 @@ const getCheckoutSession = async (req: Request, res: Response) => {
       cancel_url: `${process.env.FRONTEND_URL}/appointments/cancel?canceled=true`,
       customer_email: user.email,
       client_reference_id: doctorId,
+      metadata: {
+        appointmentId: appointmentId,
+        doctorId: doctorId,
+        userId: String(user._id),
+      },
       line_items: [
         {
           price_data: {
             currency: "try",
             unit_amount: Math.round(Number(doctor.fee) * 100),
             product_data: {
-              name: `Appointment with  ${doctor.name}`,
+              name: `Appointment with ${doctor.name}`,
               description: doctor.about || "",
               images: doctor.images?.length ? [doctor.images[0].url] : [],
             },
@@ -52,14 +59,10 @@ const getCheckoutSession = async (req: Request, res: Response) => {
           quantity: 1,
         },
       ],
-      metadata: {
-        appointmentId: appointmentId,
-        doctorId: doctorId,
-        userId: String(user._id),
-      },
     });
 
     appointment.session = session.id;
+    appointment.fee = doctor.fee;
     await appointment.save();
 
     return res.status(200).json({ success: true, sessionUrl: session.url });
@@ -71,7 +74,5 @@ const getCheckoutSession = async (req: Request, res: Response) => {
     });
   }
 };
-
-
 
 export default { getCheckoutSession };

@@ -20,7 +20,7 @@ const __dirname = path.resolve();
 
 //webhooks
 app.post(
-  "/webhook",
+  "/api/webhook",
   express.raw({ type: "application/json" }),
   handleStripeWebhook
 );

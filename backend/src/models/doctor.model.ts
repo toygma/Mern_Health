@@ -46,6 +46,7 @@ export interface IDoctor extends Document {
 
   appointmentDurationMinutes: number;
   workingHours: IWorkingHours[];
+  isPaid: "unpaid" | "paid" | "refunded";
 
   getJwtToken: () => string;
   comparePassword: (enteredPassword: string) => Promise<boolean>;
@@ -87,7 +88,11 @@ const doctorSchema = new Schema<IDoctor>(
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     experience: { type: String },
     about: { type: String },
-    
+      isPaid: {  
+      type: String,
+      enum: ["unpaid", "paid", "refunded"],
+      default: "unpaid",
+    },
     education: [
       {
         degree: { type: String },
