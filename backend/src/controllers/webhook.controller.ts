@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
 import Appointment from "../models/appointment.model";
+import User from "../models/user.model"; // 🔹 Bunu ekle
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-10-29.clover",
 });
+
 export const handleStripeWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string;
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -31,9 +33,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
     }
 
     try {
-      const appointment = await Appointment.findById(appointmentId).populate(
-        "user doctor"
-      );
+      const appointment = await Appointment.findById(appointmentId);
 
       if (!appointment) {
         console.error(`Appointment ${appointmentId} not found.`);
@@ -42,15 +42,19 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
 
       appointment.status = "confirmed";
       appointment.paid = "paid";
-      appointment.paymentId = session.payment_intent as string; 
-      appointment.paidAt = new Date(); 
+      appointment.paymentId = session.payment_intent as string;
+      appointment.paidAt = new Date();
       await appointment.save();
 
+      if (appointment.user) {
+        await User.findByIdAndUpdate(appointment.user, { paid: "paid" });
+      }
+
       console.log(
-        `Appointment ${appointmentId} and related user/doctor marked as paid.`
+        `Appointment ${appointmentId} confirmed & user marked as paid.`
       );
     } catch (err) {
-      console.error("Error updating appointment/user/doctor:", err);
+      console.error("Error updating appointment/user:", err);
       return res.status(500).send("Internal server error");
     }
   } else {

@@ -39,7 +39,7 @@ const appointmentSchema = new Schema<IAppointment>(
       enum: ["pending", "confirmed", "cancelled", "completed"],
       default: "pending",
     },
-    isPaid: {  // ✅ DÜZELTİLDİ: isPiad → isPaid
+    isPaid: {  
       type: String,
       enum: ["unpaid", "paid", "refunded"],
       default: "unpaid",
