@@ -1,4 +1,5 @@
 import z from "zod";
+import { AddressSchema } from "./signup.form.schema";
 
 export const UpdateFormSchema = z.object({
   name: z
@@ -18,10 +19,7 @@ export const UpdateFormSchema = z.object({
 
   dob: z.string({ error: "Date of birth is required." }),
 
-  address: z.object({
-    line1: z.string({ error: "Address line1 is required." }),
-    line2: z.string().optional(),
-  }),
+  address: AddressSchema,
 });
 
 export type TUpdateFormSchema = z.infer<typeof UpdateFormSchema>;

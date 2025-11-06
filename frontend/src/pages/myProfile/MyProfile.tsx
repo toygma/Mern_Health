@@ -16,6 +16,7 @@ import Button from "../../ui/Button";
 const MyProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const { data: userData } = useGetUserQuery();
+  console.log("🚀 ~ MyProfile ~ userData:", userData);
   const [updateProfile, { isSuccess, error, isLoading }] =
     useUpdateProfileMutation();
 
@@ -34,8 +35,11 @@ const MyProfile = () => {
     mode: "onChange",
     defaultValues: {
       address: {
-        line1: "",
-        line2: "",
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "",
       },
       dob: "",
       email: "",
@@ -56,8 +60,11 @@ const MyProfile = () => {
         gender: userData.gender || "Male",
         dob: userData.dob || "",
         address: {
-          line1: userData.address?.line1 || "",
-          line2: userData.address?.line2 || "",
+          street: userData.address?.street || "",
+          city: userData.address?.city || "",
+          state: userData.address?.state || "",
+          zipCode: userData.address?.zipCode || "",
+          country: userData.address?.country || "",
         },
       });
     }
@@ -112,7 +119,10 @@ const MyProfile = () => {
   };
 
   const watchAll = watch();
-
+  const profileImageUrl =
+    userData && "images" in userData && userData.images.length > 0
+      ? userData.images[0].url
+      : userData?.image?.url || "";
   return (
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -141,15 +151,7 @@ const MyProfile = () => {
                   </div>
                 ) : (
                   <img
-                    src={
-                      Array.isArray(userData?.image)
-                        ? userData.image[0]?.url
-                        : typeof userData?.image === "object"
-                        ? userData?.image?.url
-                        : typeof userData?.image === "string"
-                        ? userData?.image
-                        : "https://via.placeholder.com/150"
-                    }
+                    src={profileImageUrl}
                     alt={watchAll.name || "profile"}
                     className="w-32 h-32 rounded-2xl border-4 border-white shadow-lg object-cover"
                   />
@@ -248,16 +250,38 @@ const MyProfile = () => {
                     <label className="block text-sm font-medium text-gray-600 mb-2">
                       Adres
                     </label>
-                    <input
-                      {...register("address.line1")}
-                      disabled={!isEdit}
-                      className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500 mb-2"
-                    />
-                    <input
-                      {...register("address.line2")}
-                      disabled={!isEdit}
-                      className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
-                    />
+                    <div className="flex flex-col gap-2">
+                      <label>City</label>
+                      <input
+                        {...register("address.city")}
+                        disabled={!isEdit}
+                        className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500 mb-2"
+                      />
+                      <label>Country</label>
+                      <input
+                        {...register("address.country")}
+                        disabled={!isEdit}
+                        className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+                      />
+                      <label>State</label>
+                      <input
+                        {...register("address.state")}
+                        disabled={!isEdit}
+                        className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+                      />
+                      <label>Street</label>
+                      <input
+                        {...register("address.street")}
+                        disabled={!isEdit}
+                        className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+                      />
+                      <label>ZipCode</label>
+                      <input
+                        {...register("address.zipCode")}
+                        disabled={!isEdit}
+                        className="w-full bg-gray-50 border-2 border-gray-300 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

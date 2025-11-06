@@ -5,9 +5,11 @@ import StatusBadge from "./StatusBadge";
 const AppointmentRow = ({
   appointment,
   onUpdate,
+  onDelete
 }: {
   appointment: IAppointment;
   onUpdate: (id: string) => void;
+  onDelete: (id: string) => void;
 }) => (
   <tr className="hover:bg-gray-50 transition-colors">
     <td className="px-6 py-4 flex items-center gap-3">
@@ -43,7 +45,7 @@ const AppointmentRow = ({
             <CheckCircle size={16} /> Confirm
           </button>
           <button
-            onClick={() => onUpdate(appointment._id)}
+            onClick={() => onDelete(appointment._id)}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-1 text-sm"
           >
             <XCircle size={16} /> Cancel

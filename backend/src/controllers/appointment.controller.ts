@@ -11,23 +11,37 @@ interface CreateAppointmentBody {
   reason: string;
 }
 
-const createAppointment = async (req: Request, res: Response, next: NextFunction) => {
+const createAppointment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { doctorId, date, timeSlot, reason } = req.body as CreateAppointmentBody;
+    const { doctorId, date, timeSlot, reason } =
+      req.body as CreateAppointmentBody;
     const userId = req.user?._id;
 
     // -------------------------
     // VALIDATION
     // -------------------------
     if (!userId) {
-      return res.status(401).json({ success: false, message: "You must be logged in" });
+      return res
+        .status(401)
+        .json({ success: false, message: "You must be logged in" });
     }
     if (!doctorId || !date || !timeSlot || !reason) {
-      return res.status(400).json({ success: false, message: "Doctor, date, timeSlot, reason are required" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Doctor, date, timeSlot, reason are required",
+        });
     }
 
     // Convert date + timeSlot to actual Date object
-    const [hoursStr, minutesStr, meridiem] = timeSlot.match(/(\d+):(\d+)\s?(AM|PM)/i)!.slice(1);
+    const [hoursStr, minutesStr, meridiem] = timeSlot
+      .match(/(\d+):(\d+)\s?(AM|PM)/i)!
+      .slice(1);
     let hours = parseInt(hoursStr);
     const minutes = parseInt(minutesStr);
     if (meridiem.toUpperCase() === "PM" && hours !== 12) hours += 12;
@@ -37,14 +51,22 @@ const createAppointment = async (req: Request, res: Response, next: NextFunction
     const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
 
     if (appointmentDateTime < new Date()) {
-      return res.status(400).json({ success: false, message: "Cannot book appointment for past dates" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Cannot book appointment for past dates",
+        });
     }
 
     // -------------------------
     // CHECK DOCTOR
     // -------------------------
     const doctor = await Doctor.findById(doctorId);
-    if (!doctor) return res.status(404).json({ success: false, message: "Doctor not found" });
+    if (!doctor)
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
 
     // -------------------------
     // CHECK EXISTING APPOINTMENT
@@ -58,7 +80,14 @@ const createAppointment = async (req: Request, res: Response, next: NextFunction
       },
       status: { $in: ["pending", "confirmed"] },
     });
-    if (existing) return res.status(409).json({ success: false, message: "You already have an appointment with this doctor on this date" });
+    if (existing)
+      return res
+        .status(409)
+        .json({
+          success: false,
+          message:
+            "You already have an appointment with this doctor on this date",
+        });
 
     // -------------------------
     // CREATE APPOINTMENT
@@ -84,7 +113,13 @@ const createAppointment = async (req: Request, res: Response, next: NextFunction
       .populate("user", "name email phone")
       .populate("doctor", "name speciality fee");
 
-    res.status(201).json({ success: true, message: "Appointment booked successfully", data: populated });
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Appointment booked successfully",
+        data: populated,
+      });
   } catch (err) {
     console.error("Create Appointment Error:", err);
     next(err);
@@ -154,10 +189,11 @@ const cancelAppointment = async (
   next: NextFunction
 ) => {
   try {
-    const { appointmentId } = req.params;
-    const userId = req.user?._id;
+    const { id } = req.params;
+    const user = req.user;
 
-    const appointment = await Appointment.findById(appointmentId);
+    const appointment = await Appointment.findById(id);
+  
 
     if (!appointment) {
       return res.status(404).json({
@@ -166,18 +202,27 @@ const cancelAppointment = async (
       });
     }
 
-    if (appointment.user._id.toString() !== userId?.toString()) {
+    const isPatient =
+      user.role === "patient" &&
+      appointment.user.toString() === user._id.toString();
+
+    const isDoctor =
+      user.role === "doctor" &&
+      appointment.doctor.toString() === user._id.toString();
+
+    if (!isPatient && !isDoctor) {
       return res.status(403).json({
         success: false,
-        message: "You can only cancel your own appointments",
+        message:
+          "You can only cancel your own appointments or your own doctor appointments",
       });
     }
 
-    await Doctor.findByIdAndUpdate(appointment.doctor, {
+     await Doctor.findByIdAndUpdate(appointment.doctor, {
       $pull: { appointments: appointment._id },
     });
 
-    await Appointment.deleteOne({ _id: appointmentId });
+    await Appointment.deleteOne({ _id: id });
 
     res.status(200).json({
       success: true,
@@ -188,6 +233,7 @@ const cancelAppointment = async (
     next(error);
   }
 };
+
 const confirmAppointment = async (
   req: Request,
   res: Response,

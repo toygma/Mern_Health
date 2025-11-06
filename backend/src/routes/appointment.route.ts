@@ -17,7 +17,7 @@ appointmentRouter.get("/available-slots/:doctorId", getAvailableSlots);
 // Kullanıcı randevu işlemleri
 appointmentRouter.post("/", isAuthenticatedUser, createAppointment);
 appointmentRouter.get("/users", isAuthenticatedUser, getUserAppointments);
-appointmentRouter.put("/:appointmentId/cancel", isAuthenticatedUser, cancelAppointment);
+appointmentRouter.put("/:id/cancel", isAuthenticatedUser, cancelAppointment);
 
 // Doktor randevu işlemleri
 appointmentRouter.get("/doctor/:id", getDoctorAppointments);

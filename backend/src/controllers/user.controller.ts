@@ -6,10 +6,10 @@ import { upload_file } from "../utils/cloudinary";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { 
-      name, 
-      email, 
-      password, 
+    const {
+      name,
+      email,
+      password,
       role,
       phone,
       speciality,
@@ -30,10 +30,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    const existingUser = 
-      (await User.findOne({ email })) || 
-      (await Doctor.findOne({ email }));
-      
+    const existingUser =
+      (await User.findOne({ email })) || (await Doctor.findOne({ email }));
+
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -50,12 +49,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         password,
         role: "patient",
       });
-
     } else if (role === "doctor") {
       if (!phone || !speciality || !experience || !about) {
         return res.status(400).json({
           success: false,
-          message: "Please provide all required doctor fields (phone, speciality, experience, about).",
+          message:
+            "Please provide all required doctor fields (phone, speciality, experience, about).",
         });
       }
 
@@ -73,7 +72,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         });
       }
 
-      const serviceStrings = services.map((s:any) => s.value);
+      const serviceStrings = services.map((s: any) => s.value);
 
       newUser = await Doctor.create({
         name,
@@ -92,7 +91,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         role: "doctor",
         available: true,
       });
-
     } else {
       return res.status(400).json({
         success: false,
@@ -106,13 +104,14 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       statusCode: 201,
       res,
     });
-
   } catch (error: any) {
     console.error("Register Error:", error);
-    
+
     // Mongoose validation hatalarını yakala
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((err: any) => err.message);
+      const messages = Object.values(error.errors).map(
+        (err: any) => err.message
+      );
       return res.status(400).json({
         success: false,
         message: messages.join(", "),
@@ -122,7 +121,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
-
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -186,6 +184,9 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, phone, gender, dob, address, image } = req.body;
 
   try {
+    const isDoctor = await Doctor.exists({ _id: id });
+    const Model:any = isDoctor ? Doctor : User;
+
     const user = (await User.findById(id)) || (await Doctor.findById(id));
     if (!user) {
       return res
@@ -195,17 +196,17 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 
     let uploadedImage: { public_id: string; url: string } | undefined;
     if (image) {
-      const uploaded = await upload_file(image, "mern-health/patient");
-      uploadedImage = {
-        public_id: uploaded.public_id,
-        url: uploaded.url,
-      };
+      const folder = isDoctor ? "mern-health/doctors" : "mern-health/patient";
+      const uploaded = await upload_file(image, folder);
+      uploadedImage = { public_id: uploaded.public_id, url: uploaded.url };
     }
 
     const newUserData: any = { name, email, phone, gender, dob, address };
-    if (uploadedImage) newUserData.image = [uploadedImage];
 
-    const Model: any = user.role === "doctor" ? Doctor : User;
+    if (uploadedImage) {
+      if (isDoctor) newUserData.images = [uploadedImage];
+      else newUserData.image = uploadedImage;
+    }
 
     const updatedUser = await Model.findByIdAndUpdate(
       id,
