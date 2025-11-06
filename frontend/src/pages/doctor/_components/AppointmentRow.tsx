@@ -31,7 +31,7 @@ const AppointmentRow = ({
     </td>
     <td className="px-6 py-4 text-sm text-gray-700">{appointment.reason}</td>
     <td className="px-6 py-4">
-      <StatusBadge status={appointment.status} paid={appointment.paid} />
+      <StatusBadge status={appointment.status} paid={appointment.isPaid} />
     </td>
     <td className="px-6 py-4">
       {appointment.status === "pending" ? (
