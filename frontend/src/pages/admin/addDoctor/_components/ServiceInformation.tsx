@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FieldErrors } from "react-hook-form";
-import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
+import type { TAddDoctorFormSchema } from "../../../../validation/addDoctor.form.schema";
 
 interface ServiceInformationProps {
   error: FieldErrors<TAddDoctorFormSchema>;

@@ -3,7 +3,7 @@ import {
   type UseFormRegister,
   type FieldErrors,
 } from "react-hook-form";
-import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
+import type { TAddDoctorFormSchema } from "../../../../validation/addDoctor.form.schema";
 
 interface AwardInformationProps {
   register: UseFormRegister<TAddDoctorFormSchema>;

@@ -2,10 +2,10 @@ import { useForm } from "react-hook-form";
 import {
   LoginFormSchema,
   type TLoginFormSchema,
-} from "../../../../validation/login.form.schema";
+} from "../../../validation/login.form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../../../ui/FormInput";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, Stethoscope, User } from "lucide-react";
 import Button from "../../../ui/Button";
 import { Link, useNavigate } from "react-router";
 import { useLoginMutation } from "../../../redux/api/auth-api";
@@ -86,14 +86,56 @@ const Login = () => {
               {loginLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
-          <div>
-            <p>
-              Don't have an account?{" "}
-              <Link to={"/sign-up"} className="underline text-blue-400">
-                Sign Up
-              </Link>
-            </p>
-          </div>
+      <div className="grid md:grid-cols-2 gap-6 mt-8">
+  {/* Patient Card */}
+  <Link
+    to="/patient/sign-up"
+    className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-blue-500"
+  >
+    <div className="flex flex-col items-center text-center space-y-4">
+      <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-500 transition-colors duration-300">
+        <User
+          size={48}
+          className="text-blue-500 group-hover:text-white transition-colors duration-300"
+        />
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          Patient
+        </h3>
+        <p className="text-gray-600">
+          Book appointments and access healthcare services
+        </p>
+      </div>
+    </div>
+  </Link>
+
+  {/* Doctor Card */}
+  <Link
+    to="/doctor/sign-up"
+    className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-green-500"
+  >
+    <div className="flex flex-col items-center text-center space-y-4">
+      <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-500 transition-colors duration-300">
+        <Stethoscope
+          size={48}
+          className="text-green-500 group-hover:text-white transition-colors duration-300"
+        />
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          Doctor
+        </h3>
+        <p className="text-gray-600">
+          Manage your patients and accept appointments
+        </p>
+      </div>
+    </div>
+  </Link>
+</div>
+
         </div>
       </div>
     </div>

@@ -6,33 +6,40 @@ import { upload_file } from "../utils/cloudinary";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, email, password, role, address, workingHours } = req.body;
+    const { 
+      name, 
+      email, 
+      password, 
+      role,
+      phone,
+      speciality,
+      experience,
+      about,
+      fee,
+      education,
+      services,
+      address,
+      appointmentDurationMinutes,
+      workingHours,
+    } = req.body as IDoctor;
 
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all required fields.",
+        message: "Please provide all required fields (name, email, password).",
       });
     }
 
-    const existingUser =
-      (await User.findOne({ email })) || (await Doctor.findOne({ email }));
+    const existingUser = 
+      (await User.findOne({ email })) || 
+      (await Doctor.findOne({ email }));
+      
     if (existingUser) {
       return res.status(409).json({
         success: false,
         message: "A user with this email already exists.",
       });
     }
-
-    const defaultAddress = {
-      street: "123 Main Street",
-      city: "New York",
-      district: "Manhattan",
-      postalCode: "10001",
-      country: "United States",
-    };
-
-    const finalAddress = address || defaultAddress;
 
     let newUser: IUser | IDoctor | null = null;
 
@@ -41,18 +48,51 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         name,
         email,
         password,
-        address: finalAddress,
         role: "patient",
       });
+
     } else if (role === "doctor") {
+      if (!phone || !speciality || !experience || !about) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide all required doctor fields (phone, speciality, experience, about).",
+        });
+      }
+
+      if (!education || education.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide at least one education entry.",
+        });
+      }
+
+      if (!services || services.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide at least one service.",
+        });
+      }
+
+      const serviceStrings = services.map((s:any) => s.value);
+
       newUser = await Doctor.create({
         name,
         email,
         password,
-        address: finalAddress,
+        phone,
+        speciality,
+        experience,
+        about,
+        fee: fee || 100,
+        education,
+        services: serviceStrings,
+        address: address || {},
+        appointmentDurationMinutes: appointmentDurationMinutes || 30,
+        workingHours: workingHours || [],
         role: "doctor",
-        workingHours,
+        available: true,
       });
+
     } else {
       return res.status(400).json({
         success: false,
@@ -60,16 +100,29 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
+    // Token gönder
     sendToken({
       user: newUser,
       statusCode: 201,
       res,
     });
-  } catch (error) {
+
+  } catch (error: any) {
     console.error("Register Error:", error);
+    
+    // Mongoose validation hatalarını yakala
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err: any) => err.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(", "),
+      });
+    }
+
     next(error);
   }
 };
+
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {

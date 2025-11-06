@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
-import type { FieldErrors, UseFormGetValues, UseFormSetValue } from "react-hook-form";
+import type {
+  FieldErrors,
+  UseFormGetValues,
+  UseFormSetValue,
+} from "react-hook-form";
 import toast from "react-hot-toast";
-import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
+import type { TAddDoctorFormSchema } from "../../../../validation/addDoctor.form.schema";
 
 interface Props {
   getValues: UseFormGetValues<TAddDoctorFormSchema>;
@@ -33,26 +37,24 @@ const UploadImage = ({ setValue, getValues, error }: Props) => {
       }
 
       const reader = new FileReader();
-      
+
       reader.onload = () => {
-        if (reader.readyState === 2 && typeof reader.result === 'string') {
+        if (reader.readyState === 2 && typeof reader.result === "string") {
           const newImageUrl = reader.result;
 
           setPreviewImages((oldPreviews) => [...oldPreviews, newImageUrl]);
-          
+
           const imagesInForm = getValues("images") || [];
-          setValue(
-            "images", 
-            [...imagesInForm, newImageUrl],
-            { shouldValidate: true }
-          );
+          setValue("images", [...imagesInForm, newImageUrl], {
+            shouldValidate: true,
+          });
         }
       };
       reader.readAsDataURL(file);
     });
 
     if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      fileInputRef.current.value = "";
     }
   };
 

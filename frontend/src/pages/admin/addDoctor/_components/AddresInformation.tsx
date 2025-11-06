@@ -1,5 +1,5 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
+import type { TAddDoctorFormSchema } from "../../../../validation/addDoctor.form.schema";
 
 interface AddressInformationProps {
   register: UseFormRegister<TAddDoctorFormSchema>;

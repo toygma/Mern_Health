@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import {
   type TUpdateFormSchema,
   UpdateFormSchema,
-} from "../../../validation/user.form.schema";
+} from "../../validation/user.form.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../../ui/Button";
 

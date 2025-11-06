@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type TAddDoctorFormSchema,
   AddDoctorFormSchema,
-} from "../../../../validation/addDoctor.form.schema";
+} from "../../../validation/addDoctor.form.schema";
 import Button from "../../../ui/Button";
 import AddresInformation from "./_components/AddresInformation";
 import EducationInformation from "./_components/EducationInformation";
@@ -118,7 +118,7 @@ const AddDoctor = () => {
   }, [isSuccess, doctorError]);
 
   const onSubmit = async (data: TAddDoctorFormSchema) => {
-    console.log("🚀 ~ onSubmit ~ data:", data)
+    console.log("🚀 ~ onSubmit ~ data:", data);
     try {
       await createDoctorMutation({
         ...data,
@@ -152,7 +152,11 @@ const AddDoctor = () => {
             setValues={setValue}
           />
 
-          <UploadImage  setValue={setValue} getValues={getValues} error={errors} />
+          <UploadImage
+            setValue={setValue}
+            getValues={getValues}
+            error={errors}
+          />
 
           <AddresInformation register={register} error={errors} />
 

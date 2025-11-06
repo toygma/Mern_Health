@@ -11,12 +11,19 @@ import { GuestRoute, ProtectedPaid, ProtectedRoute } from "./protected-route";
 const HomePage = lazy(() => import("../pages/home/HomePage"));
 const AllDoctors = lazy(() => import("../pages/doctors/AllDoctors"));
 const DetailDoctor = lazy(() => import("../pages/detail/DetailDoctor"));
-const SignUp = lazy(() => import("../pages/auth/signup/SignUp"));
 const Login = lazy(() => import("../pages/auth/login/Login"));
 const MyProfile = lazy(() => import("../pages/myProfile/MyProfile"));
-const SuccessPage = lazy(() => import("../pages/myAppointments/_components/SuccessPage"));
-const MyAppointments = lazy(() => import("../pages/myAppointments/MyAppointments"));
-const CancelPage = lazy(() => import("../pages/myAppointments/_components/CancelPage"));
+const DoctorSignUp = lazy(() => import("../pages/auth/signup/doctor/SignUp"));
+const PatientSignUp = lazy(() => import("../pages/auth/signup/patient/PatientSignUp"));
+const SuccessPage = lazy(
+  () => import("../pages/myAppointments/_components/SuccessPage")
+);
+const MyAppointments = lazy(
+  () => import("../pages/myAppointments/MyAppointments")
+);
+const CancelPage = lazy(
+  () => import("../pages/myAppointments/_components/CancelPage")
+);
 
 export const MainRoutes = {
   path: "/",
@@ -109,10 +116,18 @@ export const AuthRoutes = {
           ),
         },
         {
-          path: "/sign-up",
+          path: "/patient/sign-up",
           element: (
             <Suspense fallback={<Loading />}>
-              <SignUp />
+              <PatientSignUp />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/doctor/sign-up",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <DoctorSignUp />
             </Suspense>
           ),
         },

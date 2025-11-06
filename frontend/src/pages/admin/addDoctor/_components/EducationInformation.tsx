@@ -3,12 +3,12 @@ import {
   type UseFormRegister,
   type FieldErrors,
 } from "react-hook-form";
-import type { TAddDoctorFormSchema } from "../../../../../validation/addDoctor.form.schema";
+import type { TAddDoctorFormSchema } from "../../../../validation/addDoctor.form.schema";
 
 interface EducationInformationProps {
   register: UseFormRegister<TAddDoctorFormSchema>;
   error: FieldErrors<TAddDoctorFormSchema>;
-  control: any; 
+  control: any;
 }
 
 const EducationInformation = ({

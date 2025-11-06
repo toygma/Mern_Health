@@ -36,7 +36,7 @@ export interface IDoctor extends Document {
   services: string[];
   address: Record<string, any>;
   phone: string;
-  fee: string;
+  fee: number;
   patients: string;
   awards: string;
   reviews: Types.ObjectId[];
@@ -103,7 +103,7 @@ const doctorSchema = new Schema<IDoctor>(
     services: [{ type: String }],
     address: { type: Object },
     phone: { type: String },
-    fee: { type: String },
+    fee: { type: Number,default:100 },
     patients: { type: String },
     awards: [
       {
