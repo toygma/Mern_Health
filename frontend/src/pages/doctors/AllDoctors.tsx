@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { Circle, User } from "lucide-react";
 import { Link } from "react-router";
 import Loading from "../../components/Loading";
@@ -23,14 +23,20 @@ const categories = [
 const AllDoctors = () => {
   const { data: doctors, isLoading } = useGetAllDoctorsQuery();
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [data,setData] = useState([])
 
- const filterDoctor = doctors?.data 
-  ? selectedCategory === "all"
-    ? doctors.data
-    : doctors.data.filter((doc:Doctor) => 
-        doc?.speciality?.toLowerCase() === selectedCategory.toLowerCase()
-      )
-  : [];
+  useEffect(() => {
+    const filterDoctor = doctors?.data
+      ? selectedCategory === "all"
+        ? doctors.data
+        : doctors.data.filter(
+            (doc: Doctor) =>
+              doc?.speciality?.toLowerCase() === selectedCategory.toLowerCase()
+          )
+      : [];
+      setData(filterDoctor)
+
+  }, [data,selectedCategory]);
 
   if (isLoading) {
     return <Loading />;
@@ -79,13 +85,13 @@ const AllDoctors = () => {
                 : categories.find((c) => c.id === selectedCategory)?.name}
             </h1>
             <p className="text-sm sm:text-base text-gray-600">
-              Showing {filterDoctor.length} doctors
+              Showing {data.length} doctors
             </p>
           </div>
 
           {/* Doctor Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filterDoctor.map((doctor:Doctor) => (
+            {data.map((doctor: Doctor) => (
               <Link
                 to={`/doctor/${generateSlugify(doctor.name)}/${doctor._id}`}
                 key={doctor._id}
@@ -140,7 +146,7 @@ const AllDoctors = () => {
           </div>
 
           {/* No Doctors Found */}
-          {filterDoctor.length === 0 && (
+          {data.length === 0 && (
             <div className="text-center text-gray-500 mt-20 py-10">
               <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <p className="text-lg font-medium">No doctors found.</p>
